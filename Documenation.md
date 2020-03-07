@@ -48,9 +48,7 @@ spring init \
 --version=1.0.0-SNAPSHOT \
 recommendation-service
 
-# build 
+# 
+#build 
+./gradlew build
 
-cd recommendation-service; ./gradlew build; cd -;  \
-cd product-service; ./gradlew build; cd -;  
-cd product-composite-service; ./gradlew build; cd -;  
-cd review-service; ./gradlew build; cd -;  
