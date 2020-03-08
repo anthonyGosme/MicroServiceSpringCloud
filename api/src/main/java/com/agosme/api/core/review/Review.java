@@ -1,18 +1,15 @@
-package com.agosme.microservices.core.recommendation;
+package com.agosme.api.core.review;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.experimental.Accessors;
 
-@Accessors(chain = true)
 @Getter
 @NoArgsConstructor(force = true)
-public class Recommendation {
+public class Review {
   private final int productId;
-  private final int recommendationId;
+  private final int reviewId;
   private final String author;
-  private final int rate;
+  private final String subject;
   private final String content;
   private final String serviceAddress;
 }

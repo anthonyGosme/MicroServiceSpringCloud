@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.agosme.microservices.core.product'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '13'
 
 repositories {
 	mavenCentral()

@@ -1,13 +1,20 @@
 package com.agosme.microservices.core.product;
 
-import org.junit.jupiter.api.Test;
+
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+
 @SpringBootTest
-class ProductServiceApplicationTests {
+
+public class ProductServiceApplicationTests {
+
+	public ProductServiceApplicationTests() {
+	}
 
 	@Test
-	void contextLoads() {
+	public void contextLoads() {
+
 	}
 
 }

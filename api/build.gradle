@@ -1,30 +1,46 @@
-plugins {
-    id 'org.springframework.boot' version '2.2.5.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'java'
+buildscript {
+    ext {
+        springBootVersion = '2.3.0.M2'
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://repo.spring.io/snapshot" }
+        maven { url "https://repo.spring.io/milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
 
+plugins {
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
 }
-ext {
-	lombokVersion = '1.18.4'
-}
-group = 'com.agosme.microservices.core.product'
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+group = 'com.agosme.microservices.util'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = '11'
-bootJar {
-    enabled = false
-}
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
 }
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-dependencies:2.2.5.RELEASE'
 
-    compileOnly("org.projectlombok:lombok:${lombokVersion}")
-    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
-    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
-    compileOnly group: 'org.springframework', name: 'spring-web', version: '5.2.4.RELEASE'
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
+    testCompileOnly 'org.projectlombok:lombok:1.18.12'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
+}

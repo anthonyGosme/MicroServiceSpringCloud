@@ -1,4 +1,4 @@
-package com.agosme.microservices.core.recommendation;
+package com.agosme.api.core.recommendation;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
