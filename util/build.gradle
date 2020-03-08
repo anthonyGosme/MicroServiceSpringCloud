@@ -1,0 +1,43 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+
+}
+
+
+ext {
+    lombokVersion = '1.18.4'
+}
+group = 'com.agosme.microservices.core.product'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '11'
+
+bootJar {
+    enabled = false
+}
+
+repositories {
+    mavenCentral()
+}
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-dependencies:2.2.5.RELEASE'
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+
+    compileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+
+}
+
+dependencyManagement {
+    imports { mavenBom("org.springframework.boot:spring-boot-dependencies:2.2.5.RELEASE") }
+}
+
