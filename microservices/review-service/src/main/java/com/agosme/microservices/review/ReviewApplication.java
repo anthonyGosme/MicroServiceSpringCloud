@@ -1,4 +1,4 @@
-package com.agosme.microservices.recommendation.review;
+package com.agosme.microservices.review;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

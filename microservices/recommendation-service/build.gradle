@@ -20,9 +20,9 @@ plugins {
 apply plugin: 'java'
 
 
-group = 'com.agosme.microservices.core.recommendation'
+group = 'com.agosme.microservices.recommendation'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = 11
+sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()

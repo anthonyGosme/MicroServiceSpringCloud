@@ -18,11 +18,11 @@ plugins {
 
 
 apply plugin: 'java'
-apply plugin: 'eclipse'
+
 
 group = 'com.agosme.microservices.util'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = 11
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -39,6 +39,7 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation('org.springframework.boot:spring-boot-starter-webflux')
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
 }
 
 dependencyManagement {

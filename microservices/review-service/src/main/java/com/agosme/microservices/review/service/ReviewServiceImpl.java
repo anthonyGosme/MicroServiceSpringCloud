@@ -1,4 +1,4 @@
-package com.agosme.microservices.recommendation.review.service;
+package com.agosme.microservices.review.service;
 
 
 import com.agosme.api.core.review.Review;

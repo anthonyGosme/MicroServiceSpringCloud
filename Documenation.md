@@ -51,9 +51,18 @@ recommendation-service
 # 
 #build 
 ./gradlew build
-
+./gradlew test
 
 #test
 curl http://localhost:7000/product-composite/13 -i
  curl http://localhost:7000/product-composite/113 -s | jq
  curl http://localhost:7000/product-composite/213 -s | jq
+ 
+#DEBUG ITH INTELLIJ
+start all services
+add in composition project build.gradle conf -> test.doFirst {
+	jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555'
+}
+.. preferences -> build -> gradle -> build & run & test using intellij
+gradle panel -> tasks-> verification -> test
+remote debug  127.0.0.1:5555

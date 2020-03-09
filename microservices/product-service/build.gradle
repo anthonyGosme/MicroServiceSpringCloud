@@ -20,10 +20,10 @@ plugins {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
-group = 'com.agosme.microservices.core.product'
+group = 'com.agosme.microservices.product'
 
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = 11
+sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()

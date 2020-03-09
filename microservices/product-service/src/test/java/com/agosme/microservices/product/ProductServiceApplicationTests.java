@@ -1,4 +1,4 @@
-package com.agosme.microservices.recommendation;
+package com.agosme.microservices.product;
 
 
 import org.junit.Test;

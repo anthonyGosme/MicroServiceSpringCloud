@@ -1,4 +1,4 @@
-package com.agosme.microservices.recommendation.review.test;
+package com.agosme.microservices.review;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
