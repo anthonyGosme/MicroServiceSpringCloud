@@ -1,6 +1,6 @@
-package com.agosme.microservices.core.product;
+package com.agosme.microservices.recommendation;
 
-import com.agosme.microservices.core.product.service.ProductCompositeServiceImpl;
+import com.agosme.microservices.recommendation.service.ProductCompositeServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;

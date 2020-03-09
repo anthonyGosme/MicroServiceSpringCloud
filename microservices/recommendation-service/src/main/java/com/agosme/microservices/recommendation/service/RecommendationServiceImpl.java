@@ -1,11 +1,10 @@
-package com.agosme.microservices.core.recommendation.service;
+package com.agosme.microservices.recommendation.service;
 
 
 
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.recommendation.RecommendationService;
 import com.agosme.util.exceptions.InvalidInputException;
-import com.agosme.util.exceptions.NotFoundException;
 import com.agosme.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

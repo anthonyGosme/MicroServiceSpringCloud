@@ -1,8 +1,6 @@
-package com.agosme.microservices.core.review.service;
+package com.agosme.microservices.recommendation.review.service;
 
 
-import com.agosme.api.core.recommendation.Recommendation;
-import com.agosme.api.core.recommendation.RecommendationService;
 import com.agosme.api.core.review.Review;
 import com.agosme.api.core.review.ReviewService;
 import com.agosme.util.exceptions.InvalidInputException;

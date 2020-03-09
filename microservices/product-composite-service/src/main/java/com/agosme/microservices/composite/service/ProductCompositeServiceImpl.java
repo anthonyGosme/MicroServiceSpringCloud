@@ -1,4 +1,4 @@
-package com.agosme.microservices.core.product.service;
+package com.agosme.microservices.recommendation.service;
 
 import com.agosme.api.composite.*;
 import com.agosme.api.core.product.Product;
