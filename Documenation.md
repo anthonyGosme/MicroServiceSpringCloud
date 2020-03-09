@@ -52,3 +52,8 @@ recommendation-service
 #build 
 ./gradlew build
 
+
+#test
+curl http://localhost:7000/product-composite/13 -i
+ curl http://localhost:7000/product-composite/113 -s | jq
+ curl http://localhost:7000/product-composite/213 -s | jq

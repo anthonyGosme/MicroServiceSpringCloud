@@ -2,8 +2,10 @@ package com.agosme.api.core.review;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 public class Review {
   private final int productId;

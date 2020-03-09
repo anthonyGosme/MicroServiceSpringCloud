@@ -2,12 +2,14 @@ package com.agosme.api.core.recommendation;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
+
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Getter
 @NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 public class Recommendation {
   private final int productId;
   private final int recommendationId;

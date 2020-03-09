@@ -12,4 +12,4 @@ app:
 logging:
   level:
     root: INFO
-    com.agosme.microservices: DEBUG
+    com.agosme: DEBUG
