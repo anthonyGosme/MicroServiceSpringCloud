@@ -13,9 +13,9 @@ repositories {
 	maven { url "https://repo.spring.io/snapshot" }
 	maven { url "https://repo.spring.io/milestone" }
 }
-test.doFirst {
-	jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555'
-}
+//test.doFirst {
+//	jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555'
+//}
 dependencies {
 	implementation project(':api')
 	implementation project(':util')
