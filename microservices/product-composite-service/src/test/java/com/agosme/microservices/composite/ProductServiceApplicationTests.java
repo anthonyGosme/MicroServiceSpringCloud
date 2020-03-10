@@ -11,7 +11,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
-
+@AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @RunWith(SpringRunner.class)
 public class ProductServiceApplicationTests {
