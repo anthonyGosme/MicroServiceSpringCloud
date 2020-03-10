@@ -78,3 +78,14 @@ echo 'new byte[500_000_000]' | docker run --rm -i -m=1024M openjdk:9-jdk jshell 
 
 ./gra
 'product-service'product-service
+
+# docker
+docker-compose logs product
+docker system prune -f --volumes
+
+# restart 
+docker-compose up -d --scale product=0
+docker-compose up -d --scale product=1
+
+# continous test
+date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date
