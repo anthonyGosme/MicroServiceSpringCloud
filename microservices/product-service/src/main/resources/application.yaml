@@ -4,3 +4,11 @@ logging:
   level:
     root: INFO
     com.agosme: DEBUG
+
+---
+spring.profiles: docker
+server.port: 8080
+logging:
+  level:
+    root: INFO
+    com.agosme: DEBUG

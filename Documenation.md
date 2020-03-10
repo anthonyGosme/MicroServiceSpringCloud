@@ -48,17 +48,16 @@ spring init \
 --version=1.0.0-SNAPSHOT \
 recommendation-service
 
-# 
-#build 
+## build 
 ./gradlew build
 ./gradlew test
 
-#test
+## test
 curl http://localhost:7000/product-composite/13 -i
  curl http://localhost:7000/product-composite/113 -s | jq
  curl http://localhost:7000/product-composite/213 -s | jq
  
-#DEBUG ITH INTELLIJ
+## DEBUG ITH INTELLIJ
 start all services
 add in composition project build.gradle conf -> test.doFirst {
 	jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555'
@@ -66,3 +65,16 @@ add in composition project build.gradle conf -> test.doFirst {
 .. preferences -> build -> gradle -> build & run & test using intellij
 gradle panel -> tasks-> verification -> test
 remote debug  127.0.0.1:5555
+
+# JSHELL
+echo 'Runtime.getRuntime().availableProcessors()' | jshell -q
+java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+java -Xmx2000m -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpu-shares 2048 openjdk:12.0.2 jshell -q
+docker run --rm -it openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+## OutOfMemeory (java allocate 25% of system memory by default)
+echo 'new byte[500_000_000]' | docker run --rm -i -m=1024M openjdk:12.0.2 jshell -q
+echo 'new byte[500_000_000]' | docker run --rm -i -m=1024M openjdk:9-jdk jshell -q
+
+./gra
+'product-service'product-service
