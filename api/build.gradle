@@ -4,8 +4,7 @@ buildscript {
     }
     repositories {
         mavenCentral()
-        maven { url "https://repo.spring.io/snapshot" }
-        maven { url "https://repo.spring.io/milestone" }
+        maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
     }
     dependencies {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
@@ -13,21 +12,21 @@ buildscript {
 }
 
 plugins {
-    id "io.spring.dependency-management" version "1.0.9.RELEASE"
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
 
 apply plugin: 'java'
+apply plugin: 'eclipse'
 
-
-group = 'com.agosme.microservices.util'
+group = 'com.agosme.microservices.api'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven { url "https://repo.spring.io/snapshot" }
-    maven { url "https://repo.spring.io/milestone" }
+
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 
 dependencies {
@@ -37,11 +36,14 @@ dependencies {
 
     testCompileOnly 'org.projectlombok:lombok:1.18.12'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
-    implementation('org.springframework.boot:spring-boot-starter-webflux')
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
 
+
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation('io.springfox:springfox-swagger2:3.0.0-20190808.104142-39')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 
 dependencyManagement {
     imports { mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}") }
 }
+

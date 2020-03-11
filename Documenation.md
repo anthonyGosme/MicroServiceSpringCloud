@@ -87,5 +87,5 @@ docker system prune -f --volumes
 docker-compose up -d --scale product=0
 docker-compose up -d --scale product=1
 
-# continous test
+# continous integration
 date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date
