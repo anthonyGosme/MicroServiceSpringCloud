@@ -25,11 +25,37 @@ repositories {
 }
 
 
+
+ext {
+	mapstructVersion = "1.3.0.Beta2"
+}
 dependencies {
+	// lombok
+	compileOnly 'org.projectlombok:lombok:1.18.12'
+	annotationProcessor 'org.projectlombok:lombok:1.18.12'
+	testCompileOnly 'org.projectlombok:lombok:1.18.12'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
+
+
+
+	// api
 	implementation project(':api')
 	implementation project(':util')
+
+	// spring
 	implementation('org.springframework.boot:spring-boot-starter-actuator')
 	implementation('org.springframework.boot:spring-boot-starter-webflux')
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 	testImplementation('io.projectreactor:reactor-test')
+
+	//map structure
+	implementation("org.mapstruct:mapstruct:${mapstructVersion}")
+	compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+	testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+	// DB : h2 for test mysql for run
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation('mysql:mysql-connector-java')
+	testImplementation('com.h2database:h2')
 }
