@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.IntStream.rangeClosed;
 import static org.junit.Assert.*;
 import static org.springframework.data.domain.Sort.Direction.ASC;
-
+// test uniquement la partie persistance  sans passer par l'API
 @RunWith(SpringRunner.class)
 @DataMongoTest
 public class PersistenceTests {
