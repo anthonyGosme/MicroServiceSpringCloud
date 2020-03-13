@@ -1,6 +1,5 @@
 package com.agosme.microservices.review.service;
 
-
 import com.agosme.api.core.review.Review;
 import com.agosme.api.core.review.ReviewService;
 import com.agosme.util.exceptions.InvalidInputException;
@@ -17,14 +16,12 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReviewServiceImpl.class);
-  private final ServiceUtil  serviceUtil;
-
+  private final ServiceUtil serviceUtil;
 
   @Autowired
   public ReviewServiceImpl(ServiceUtil serviceUtil) {
     this.serviceUtil = serviceUtil;
   }
-
 
   @Override
   public List<Review> getReviews(int productId) {
@@ -34,17 +31,21 @@ public class ReviewServiceImpl implements ReviewService {
 
     if (productId == 213) {
       LOG.debug("No review found for productId: {}", productId);
-      return  new ArrayList<>();
+      return new ArrayList<>();
     }
 
-
     List<Review> list = new ArrayList<>();
-    list.add(new Review(productId, 1, "Author 1", "Subject 1", "Content 1", serviceUtil.getServiceAddress()));
-    list.add(new Review(productId, 2, "Author 2", "Subject 2", "Content 2", serviceUtil.getServiceAddress()));
-    list.add(new Review(productId, 3, "Author 3", "Subject 3", "Content 3", serviceUtil.getServiceAddress()));
+    list.add(
+        new Review(
+            productId, 1, "Author 1", "Subject 1", "Content 1", serviceUtil.getServiceAddress()));
+    list.add(
+        new Review(
+            productId, 2, "Author 2", "Subject 2", "Content 2", serviceUtil.getServiceAddress()));
+    list.add(
+        new Review(
+            productId, 3, "Author 3", "Subject 3", "Content 3", serviceUtil.getServiceAddress()));
 
     LOG.debug("/reviews response size: {}", list.size());
     return list;
   }
-
 }

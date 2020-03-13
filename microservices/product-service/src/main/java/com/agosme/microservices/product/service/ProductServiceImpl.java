@@ -1,6 +1,5 @@
 package com.agosme.microservices.product.service;
 
-
 import com.agosme.api.core.product.Product;
 import com.agosme.api.core.product.ProductService;
 import com.agosme.util.exceptions.InvalidInputException;
@@ -13,8 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductServiceImpl implements ProductService {
-  private final ServiceUtil serviceUtil;
   private static final Logger LOG = LoggerFactory.getLogger(ProductServiceImpl.class);
+  private final ServiceUtil serviceUtil;
+
   @Autowired
   public ProductServiceImpl(ServiceUtil serviceUtil) {
     this.serviceUtil = serviceUtil;
@@ -26,9 +26,9 @@ public class ProductServiceImpl implements ProductService {
 
     if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
 
-    if (productId == 13) throw new NotFoundException("No product found for productId: " + productId);
+    if (productId == 13)
+      throw new NotFoundException("No product found for productId: " + productId);
 
     return new Product(productId, "name-" + productId, 123, serviceUtil.getServiceAddress());
-
   }
 }

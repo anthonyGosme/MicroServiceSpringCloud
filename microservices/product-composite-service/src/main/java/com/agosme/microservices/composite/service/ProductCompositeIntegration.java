@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+
 @Component
 public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
@@ -74,11 +75,10 @@ public class ProductCompositeIntegration
     } catch (HttpClientErrorException ex) {
 
       switch (ex.getStatusCode()) {
-
         case NOT_FOUND:
           throw new NotFoundException(getErrorMessage(ex));
 
-        case UNPROCESSABLE_ENTITY :
+        case UNPROCESSABLE_ENTITY:
           throw new InvalidInputException(getErrorMessage(ex));
 
         default:
@@ -88,6 +88,7 @@ public class ProductCompositeIntegration
       }
     }
   }
+
   private String getErrorMessage(HttpClientErrorException ex) {
     try {
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
@@ -95,19 +96,26 @@ public class ProductCompositeIntegration
       return ex.getMessage();
     }
   }
+
   @Override
   public List<Recommendation> getRecommendations(int productId) {
     try {
       String url = recommendationServiceUrl + productId;
 
       LOG.debug("Will call getRecommendations API on URL: {}", url);
-      List<Recommendation> recommendations = restTemplate.exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() {}).getBody();
+      List<Recommendation> recommendations =
+          restTemplate
+              .exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() {})
+              .getBody();
 
-      LOG.debug("Found {} recommendations for a product with id: {}", recommendations.size(), productId);
+      LOG.debug(
+          "Found {} recommendations for a product with id: {}", recommendations.size(), productId);
       return recommendations;
 
     } catch (Exception ex) {
-      LOG.warn("Got an exception while requesting recommendations, return zero recommendations: {}", ex.getMessage());
+      LOG.warn(
+          "Got an exception while requesting recommendations, return zero recommendations: {}",
+          ex.getMessage());
       return new ArrayList<>();
     }
   }
@@ -118,13 +126,17 @@ public class ProductCompositeIntegration
       String url = reviewServiceUrl + productId;
 
       LOG.debug("Will call getReviews API on URL: {}", url);
-      List<Review> reviews = restTemplate.exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() {}).getBody();
+      List<Review> reviews =
+          restTemplate
+              .exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() {})
+              .getBody();
 
       LOG.debug("Found {} reviews for a product with id: {}", reviews.size(), productId);
       return reviews;
 
     } catch (Exception ex) {
-      LOG.warn("Got an exception while requesting reviews, return zero reviews: {}", ex.getMessage());
+      LOG.warn(
+          "Got an exception while requesting reviews, return zero reviews: {}", ex.getMessage());
       return new ArrayList<>();
     }
   }

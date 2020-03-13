@@ -1,13 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '2.2.5.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '2.2.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 apply plugin: 'java'
@@ -21,33 +21,33 @@ sourceCompatibility = 1.8
 
 ext {
 //	springfoxVersion = "3.0.0-SNAPSHOT"
-	springfoxVersion = "3.0.0-20190808.104142"
+    springfoxVersion = "3.0.0-20190808.104142"
 }
 
 repositories {
-	mavenCentral()
-	maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+    mavenCentral()
+    maven { url 'http://oss.jfrog.org/artifactory/oss-snapshot-local/' }
 }
 //test.doFirst {
 //	jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5555'
 //}
 
 dependencies {
-	implementation project(':api')
-	implementation project(':util')
-	implementation('org.springframework.boot:spring-boot-starter-actuator')
-	implementation('org.springframework.boot:spring-boot-starter-webflux')
-	testImplementation('org.springframework.boot:spring-boot-starter-test')
-	testImplementation('io.projectreactor:reactor-test')
+    implementation project(':api')
+    implementation project(':util')
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+    testImplementation('io.projectreactor:reactor-test')
 
-	implementation('org.springframework.boot:spring-boot-starter-actuator')
-	implementation('org.springframework.boot:spring-boot-starter-webflux')
-	implementation("io.springfox:springfox-swagger2:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-swagger-ui:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-swagger-common:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-spring-webflux:${springfoxVersion}-31")
-	implementation("io.springfox:springfox-spi:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-core:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-schema:${springfoxVersion}-39")
-	implementation("io.springfox:springfox-spring-web:${springfoxVersion}-38")
+    implementation('org.springframework.boot:spring-boot-starter-actuator')
+    implementation('org.springframework.boot:spring-boot-starter-webflux')
+    implementation("io.springfox:springfox-swagger2:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-swagger-ui:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-swagger-common:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-spring-webflux:${springfoxVersion}-31")
+    implementation("io.springfox:springfox-spi:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-core:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-schema:${springfoxVersion}-39")
+    implementation("io.springfox:springfox-spring-web:${springfoxVersion}-38")
 }

@@ -12,8 +12,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 public class ProductEntity {
 
-
-
   @Id private String id;
 
   @Version private Integer version;
@@ -29,6 +27,4 @@ public class ProductEntity {
     this.name = name;
     this.weight = weight;
   }
-
-
 }

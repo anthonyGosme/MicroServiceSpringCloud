@@ -53,6 +53,10 @@ public class ProductCompositeServiceApplication {
   @Value("${api.common.contact.email}")
   String apiContactEmail;
 
+  public static void main(String[] args) {
+    SpringApplication.run(ProductCompositeServiceApplication.class, args);
+  }
+
   /**
    * Will exposed on $HOST:$PORT/swagger-ui.html
    *
@@ -84,9 +88,5 @@ public class ProductCompositeServiceApplication {
   @Bean
   RestTemplate restTemplate() {
     return new RestTemplate();
-  }
-
-  public static void main(String[] args) {
-    SpringApplication.run(ProductCompositeServiceApplication.class, args);
   }
 }

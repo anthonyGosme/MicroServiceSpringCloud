@@ -26,10 +26,10 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RunWith(SpringRunner.class)
 public class ProductServiceApplicationTests {
 
-  @Autowired private WebTestClient client;
   private static final int PRODUCT_ID_OK = 1;
   private static final int PRODUCT_ID_NOT_FOUND = 2;
   private static final int PRODUCT_ID_INVALID = 3;
+  @Autowired private WebTestClient client;
   @MockBean private ProductCompositeIntegration compositeIntegration;
 
   public ProductServiceApplicationTests() {}
