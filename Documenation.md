@@ -91,4 +91,5 @@ docker-compose up -d --scale product=1
 # continous integration
 date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date
 
-#swagger
+#persitance test
+./gradlew microservices:product-service:test --tests PersistenceTests

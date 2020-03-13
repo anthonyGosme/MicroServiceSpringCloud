@@ -3,10 +3,12 @@ package com.agosme.api.core.recommendation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Getter
+@Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class Recommendation {

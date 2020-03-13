@@ -3,10 +3,12 @@ package com.agosme.api.core.product;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 @Getter
+@Setter
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 public class Product {
@@ -14,4 +16,7 @@ public class Product {
   private final String name;
   private final int weight;
   private final String serviceAddress;
+
+  public void setServiceAddress(String serviceAddress) {
+  }
 }
