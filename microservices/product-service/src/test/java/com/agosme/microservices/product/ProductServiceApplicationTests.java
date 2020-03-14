@@ -4,18 +4,25 @@ import com.agosme.api.core.product.Product;
 import com.agosme.microservices.product.persistance.ProductRepository;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static reactor.core.publisher.Mono.just;
 // test via l'API
-@SpringBootTest
+@RunWith(SpringRunner.class)
+@SpringBootTest(
+    webEnvironment = RANDOM_PORT,
+    properties = {"spring.data.mongodb.port: 0"})
 public class ProductServiceApplicationTests {
 
   @Autowired private WebTestClient client;
@@ -31,12 +38,13 @@ public class ProductServiceApplicationTests {
   public void getProductById() {
 
     int productId = 1;
-
+    WebTestClient.BodyContentSpec ret =
     postAndVerifyProduct(productId, OK);
 
     assertTrue(repository.findByProductId(productId).isPresent());
 
-    getAndVerifyProduct(productId, OK).jsonPath("$.productId").isEqualTo(productId);
+
+   getAndVerifyProduct(productId, OK).jsonPath("$.productId").isEqualTo(productId);
   }
 
   @Test

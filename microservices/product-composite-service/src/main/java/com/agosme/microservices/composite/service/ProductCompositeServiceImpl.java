@@ -28,6 +28,60 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   }
 
   @Override
+  public void createCompositeProduct(ProductAggregate body) {
+
+    try {
+
+      LOG.debug(
+          "createCompositeProduct: creates a new composite entity for productId: {}",
+          body.getProductId());
+
+      Product product = new Product(body.getProductId(), body.getName(), body.getWeight(), null);
+      integration.createProduct(product);
+
+      if (body.getRecommendations() != null) {
+        body.getRecommendations()
+            .forEach(
+                r -> {
+                  Recommendation recommendation =
+                      new Recommendation(
+                          body.getProductId(),
+                          r.getRecommendationId(),
+                          r.getAuthor(),
+                          r.getRate(),
+                          r.getContent(),
+                          null);
+                  integration.createRecommendation(recommendation);
+                });
+      }
+
+      if (body.getReviews() != null) {
+        body.getReviews()
+            .forEach(
+                r -> {
+                  Review review =
+                      new Review(
+                          body.getProductId(),
+                          r.getReviewId(),
+                          r.getAuthor(),
+                          r.getSubject(),
+                          r.getContent(),
+                          null);
+                  integration.createReview(review);
+                });
+      }
+
+      LOG.debug(
+          "createCompositeProduct: composite entites created for productId: {}",
+          body.getProductId());
+
+    } catch (RuntimeException re) {
+      LOG.warn("createCompositeProduct failed", re);
+      throw re;
+    }
+  }
+
+  @Override
   public ProductAggregate getProduct(int productId) {
 
     Product product = integration.getProduct(productId);
@@ -40,6 +94,20 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     return createProductAggregate(
         product, recommendations, reviews, serviceUtil.getServiceAddress());
+  }
+
+  @Override
+  public void deleteCompositeProduct(int productId) {
+
+    LOG.debug("deleteCompositeProduct: Deletes a product aggregate for productId: {}", productId);
+
+    integration.deleteProduct(productId);
+
+    integration.deleteRecommendations(productId);
+
+    integration.deleteReviews(productId);
+
+    LOG.debug("getCompositeProduct: aggregate entities deleted for productId: {}", productId);
   }
 
   private ProductAggregate createProductAggregate(
@@ -61,7 +129,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                 .map(
                     r ->
                         new RecommendationSummary(
-                            r.getRecommendationId(), r.getAuthor(), r.getRate()))
+                            r.getRecommendationId(), r.getAuthor(), r.getRate(),r.getContent()))
                 .collect(Collectors.toList());
 
     // 3. Copy summary review info, if available

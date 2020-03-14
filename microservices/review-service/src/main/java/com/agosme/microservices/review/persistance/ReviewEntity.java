@@ -1,16 +1,15 @@
 package com.agosme.microservices.review.persistance;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Version;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Index;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@Entity
 @Table(
     name = "reviews",
     indexes = {
@@ -27,4 +26,12 @@ public class ReviewEntity {
   private String author;
   private String subject;
   private String content;
+
+  public ReviewEntity(int productId, int reviewId, String author, String subject, String content) {
+    this.productId = productId;
+    this.reviewId = reviewId;
+    this.author = author;
+    this.subject = subject;
+    this.content = content;
+  }
 }

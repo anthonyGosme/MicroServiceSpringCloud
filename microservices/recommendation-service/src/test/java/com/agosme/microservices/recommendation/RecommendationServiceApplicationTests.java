@@ -3,7 +3,7 @@ package com.agosme.microservices.recommendation;
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.microservices.recommendation.persistance.RecommendationRepository;
 import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

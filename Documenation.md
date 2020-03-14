@@ -92,4 +92,17 @@ docker-compose up -d --scale product=1
 date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date
 
 #persitance test
-./gradlew microservices:product-service:test --tests PersistenceTests
+##  all
+./gradlew clean test  --info 
+
+
+./gradlew microservices:product-service:test test   --info
+./gradlew microservices:product-service:test tests ProductServiceApplicationTests --info
+./gradlew clean test  --info 
+
+
+./gradlew microservices:review-service:test test  --info
+./gradlew microservices:product-service:test test  --info
+./gradlew microservices:recommendation-service:test test  --info
+./gradlew microservices:product-composite-service:test test  --info
+

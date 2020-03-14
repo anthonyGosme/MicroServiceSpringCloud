@@ -1,5 +1,6 @@
 package com.agosme.api.core.recommendation;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-// @RequiredArgsConstructor
+@AllArgsConstructor
 public class Recommendation {
   private int productId;
   private int recommendationId;
@@ -16,18 +17,5 @@ public class Recommendation {
   private String content;
   private String serviceAddress;
 
-  public Recommendation(
-      int productId,
-      int recommendationId,
-      String author,
-      int rate,
-      String content,
-      String serviceAddress) {
-    this.productId = productId;
-    this.recommendationId = recommendationId;
-    this.author = author;
-    this.rate = rate;
-    this.content = content;
-    this.serviceAddress = serviceAddress;
-  }
+
 }

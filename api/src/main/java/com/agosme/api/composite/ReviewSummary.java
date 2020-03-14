@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class ReviewSummary {
+  private String content;
   private final int reviewId;
   private final String author;
   private final String subject;

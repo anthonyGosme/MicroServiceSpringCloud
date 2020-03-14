@@ -4,7 +4,7 @@ logging:
   level:
     root: INFO
     com.agosme: DEBUG
-
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
 ---
 spring.profiles: docker
 server.port: 8080
