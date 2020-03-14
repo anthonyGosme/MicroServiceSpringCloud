@@ -161,7 +161,7 @@ public class ProductCompositeIntegration
   @Override
   public void deleteRecommendations(int productId) {
     try {
-      String url = recommendationServiceUrl + "?productId=" + productId;
+      String url = recommendationServiceUrl  + productId;
       LOG.debug("Will call the deleteRecommendations API on URL: {}", url);
 
       restTemplate.delete(url);

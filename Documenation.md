@@ -95,14 +95,16 @@ date && ./gradlew clean build && docker-compose build && ./test-em-all.bash star
 ##  all
 ./gradlew clean test  --info 
 
+./gradlew test  --info 
 
-./gradlew microservices:product-service:test test   --info
-./gradlew microservices:product-service:test tests ProductServiceApplicationTests --info
-./gradlew clean test  --info 
+./gradlew microservices:product-service:test  ProductServiceApplicationTests info
+
+#enter inside DB via docker-compose
+docker-compose exec mongodb mongo --quiet
+docker-compose exec mysql mysql -uuser -p review-db
 
 
-./gradlew microservices:review-service:test test  --info
-./gradlew microservices:product-service:test test  --info
-./gradlew microservices:recommendation-service:test test  --info
-./gradlew microservices:product-composite-service:test test  --info
 
+
+#swaggee openapi
+http://localhost:7000/swagger-ui.html
