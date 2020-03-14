@@ -2,16 +2,33 @@ package com.agosme.api.composite;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
+
+
+
 public class ProductAggregate {
-  private final int productId;
-  private final String name;
-  private final int weight;
-  private final List<RecommendationSummary> recommendations;
-  private final List<ReviewSummary> reviews;
-  private final ServiceAddresses serviceAddresses;
+  private  int productId;
+  private  String name;
+  private  int weight;
+  private  List<RecommendationSummary> recommendations;
+  private  List<ReviewSummary> reviews;
+  private  ServiceAddresses serviceAddresses;
+
+  public ProductAggregate() {
+
+  }
+
+  public ProductAggregate(int productId, String name, int weight, List<RecommendationSummary> recommendations, List<ReviewSummary> reviews, ServiceAddresses serviceAddresses) {
+    this.productId = productId;
+    this.name = name;
+    this.weight = weight;
+    this.recommendations = recommendations;
+    this.reviews = reviews;
+    this.serviceAddresses = serviceAddresses;
+  }
 }

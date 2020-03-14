@@ -1,13 +1,17 @@
 package com.agosme.api.composite;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 public class ReviewSummary {
+  private int reviewId;
+  private String author;
+  private String subject;
   private String content;
-  private final int reviewId;
-  private final String author;
-  private final String subject;
 }

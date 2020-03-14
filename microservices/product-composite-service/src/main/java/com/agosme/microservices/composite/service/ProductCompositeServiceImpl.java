@@ -137,7 +137,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         (reviews == null)
             ? null
             : reviews.stream()
-                .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject()))
+                .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject(),r.getContent()))
                 .collect(Collectors.toList());
 
     // 4. Create info regarding the involved microservices addresses
