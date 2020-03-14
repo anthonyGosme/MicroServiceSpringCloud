@@ -61,6 +61,11 @@ public class ProductCompositeIntegration
   }
 
   @Override
+  public Product createProduct(Product body) {
+    return null;
+  }
+
+  @Override
   public Product getProduct(int productId) {
 
     try {
@@ -89,12 +94,22 @@ public class ProductCompositeIntegration
     }
   }
 
+  @Override
+  public void deleteProduct(int productId) {
+
+  }
+
   private String getErrorMessage(HttpClientErrorException ex) {
     try {
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
     } catch (IOException ioex) {
       return ex.getMessage();
     }
+  }
+
+  @Override
+  public Recommendation createRecommendation(Recommendation body) {
+    return null;
   }
 
   @Override
@@ -121,6 +136,16 @@ public class ProductCompositeIntegration
   }
 
   @Override
+  public void deleteRecommendations(int productId) {
+
+  }
+
+  @Override
+  public Review createReview(Review body) {
+    return null;
+  }
+
+  @Override
   public List<Review> getReviews(int productId) {
     try {
       String url = reviewServiceUrl + productId;
@@ -139,5 +164,10 @@ public class ProductCompositeIntegration
           "Got an exception while requesting reviews, return zero reviews: {}", ex.getMessage());
       return new ArrayList<>();
     }
+  }
+
+  @Override
+  public void deleteReviews(int productId) {
+
   }
 }

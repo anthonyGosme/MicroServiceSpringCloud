@@ -24,7 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @RunWith(SpringRunner.class)
-public class ProductServiceApplicationTests {
+public class ProductCompositeServiceApplicationTests {
 
   private static final int PRODUCT_ID_OK = 1;
   private static final int PRODUCT_ID_NOT_FOUND = 2;
@@ -32,7 +32,7 @@ public class ProductServiceApplicationTests {
   @Autowired private WebTestClient client;
   @MockBean private ProductCompositeIntegration compositeIntegration;
 
-  public ProductServiceApplicationTests() {}
+  public ProductCompositeServiceApplicationTests() {}
 
   @Before
   public void setUp() {
