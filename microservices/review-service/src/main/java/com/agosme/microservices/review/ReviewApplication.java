@@ -15,8 +15,7 @@ public class ReviewApplication {
   public static void main(String[] args) {
     ConfigurableApplicationContext ctx = SpringApplication.run(ReviewApplication.class, args);
 
-    String mongodDbHost = ctx.getEnvironment().getProperty("spring.data.mongodb.host");
-    String mongodDbPort = ctx.getEnvironment().getProperty("spring.data.mongodb.port");
-    LOG.info("Connected to MongoDb: " + mongodDbHost + ":" + mongodDbPort);
+    String mysqlUrl = ctx.getEnvironment().getProperty("spring.datasource.url");
+    LOG.info("Connected to MysSQl: " + mysqlUrl);
   }
 }

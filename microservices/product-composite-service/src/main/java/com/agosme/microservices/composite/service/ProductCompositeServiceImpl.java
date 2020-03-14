@@ -105,7 +105,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     integration.deleteRecommendations(productId);
 
- //   integration.deleteReviews(productId);
+    integration.deleteReviews(productId);
 
     LOG.debug("getCompositeProduct: aggregate entities deleted for productId: {}", productId);
   }

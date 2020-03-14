@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 date
 ./gradlew clean build
 docker-compose build

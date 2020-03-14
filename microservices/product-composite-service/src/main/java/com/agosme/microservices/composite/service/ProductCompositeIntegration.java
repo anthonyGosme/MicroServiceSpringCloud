@@ -94,7 +94,6 @@ public class ProductCompositeIntegration
     }
   }
 
-
   @Override
   public void deleteProduct(int productId) {
     try {
@@ -107,8 +106,6 @@ public class ProductCompositeIntegration
       throw handleHttpClientException(ex);
     }
   }
-
-
 
   protected String getErrorMessage(HttpClientErrorException ex) {
     try {
@@ -161,7 +158,7 @@ public class ProductCompositeIntegration
   @Override
   public void deleteRecommendations(int productId) {
     try {
-      String url = recommendationServiceUrl  + productId;
+      String url = recommendationServiceUrl + productId;
       LOG.debug("Will call the deleteRecommendations API on URL: {}", url);
 
       restTemplate.delete(url);
@@ -211,11 +208,10 @@ public class ProductCompositeIntegration
 
   protected RuntimeException handleHttpClientException(HttpClientErrorException ex) {
     switch (ex.getStatusCode()) {
-
       case NOT_FOUND:
         return new NotFoundException(getErrorMessage(ex));
 
-      case UNPROCESSABLE_ENTITY :
+      case UNPROCESSABLE_ENTITY:
         return new InvalidInputException(getErrorMessage(ex));
 
       default:
@@ -228,7 +224,7 @@ public class ProductCompositeIntegration
   @Override
   public void deleteReviews(int productId) {
     try {
-      String url = reviewServiceUrl + "?productId=" + productId;
+      String url = reviewServiceUrl + productId;
       LOG.debug("Will call the deleteReviews API on URL: {}", url);
 
       restTemplate.delete(url);
