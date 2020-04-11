@@ -18,6 +18,9 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,9 +37,11 @@ public class ProductCompositeIntegration
   private final String productServiceUrl;
   private final String recommendationServiceUrl;
   private final String reviewServiceUrl;
+  private final WebClient webClient;
 
   @Autowired
   public ProductCompositeIntegration(
+      WebClient.Builder webClient,
       RestTemplate restTemplate,
       ObjectMapper mapper,
       @Value("${app.product-service.host}") String productServiceHost,
@@ -45,7 +50,7 @@ public class ProductCompositeIntegration
       @Value("${app.recommendation-service.port}") int recommendationServicePort,
       @Value("${app.review-service.host}") String reviewServiceHost,
       @Value("${app.review-service.port}") int reviewServicePort) {
-
+    this.webClient = webClient.build();
     this.restTemplate = restTemplate;
     this.mapper = mapper;
 
@@ -78,8 +83,19 @@ public class ProductCompositeIntegration
   }
 
   @Override
-  public Product getProduct(int productId) {
+  public Mono<Product> getProduct(int productId) {
+    String url = productServiceUrl + "/product/" + productId;
+    LOG.debug("Will call the getProduct API on URL: {}", url);
 
+    return webClient
+        .get()
+        .uri(url)
+        .retrieve()
+        .bodyToMono(Product.class)
+        .log()
+        .onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
+
+    /*
     try {
       String url = productServiceUrl + "/" + productId;
       LOG.debug("Will call the getProduct API on URL: {}", url);
@@ -91,7 +107,7 @@ public class ProductCompositeIntegration
 
     } catch (HttpClientErrorException ex) {
       throw handleHttpClientException(ex);
-    }
+    }*/
   }
 
   @Override
@@ -114,7 +130,13 @@ public class ProductCompositeIntegration
       return ex.getMessage();
     }
   }
-
+  protected String getErrorMessage(WebClientResponseException ex) {
+    try {
+      return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
+    } catch (IOException ioex) {
+      return ex.getMessage();
+    }
+  }
   @Override
   public Recommendation createRecommendation(Recommendation body) {
 
@@ -217,6 +239,30 @@ public class ProductCompositeIntegration
       default:
         LOG.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
         LOG.warn("Error body: {}", ex.getResponseBodyAsString());
+        return ex;
+    }
+  }
+
+  private Throwable handleException(Throwable ex) {
+
+    if (!(ex instanceof WebClientResponseException)) {
+      LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+      return ex;
+    }
+
+    WebClientResponseException wcre = (WebClientResponseException)ex;
+
+    switch (wcre.getStatusCode()) {
+
+      case NOT_FOUND:
+        return new NotFoundException(getErrorMessage(wcre));
+
+      case UNPROCESSABLE_ENTITY :
+        return new InvalidInputException(getErrorMessage(wcre));
+
+      default:
+        LOG.warn("Got a unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
+        LOG.warn("Error body: {}", wcre.getResponseBodyAsString());
         return ex;
     }
   }

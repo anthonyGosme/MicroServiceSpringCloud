@@ -51,6 +51,7 @@ recommendation-service
 ## build 
 ./gradlew build
 ./gradlew test
+./gradlew  :microservices:product-service:test
 
 ## test
 curl http://localhost:7000/product-composite/13 -i

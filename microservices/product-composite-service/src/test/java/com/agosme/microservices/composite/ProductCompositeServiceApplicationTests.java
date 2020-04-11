@@ -19,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
@@ -44,7 +45,7 @@ public class ProductCompositeServiceApplicationTests {
   public void setUp() {
 
     when(compositeIntegration.getProduct(PRODUCT_ID_OK))
-        .thenReturn(new Product(PRODUCT_ID_OK, "name", 1, "mock-address"));
+        .thenReturn(Mono.just(new Product(PRODUCT_ID_OK, "name", 1, "mock-address")));
     when(compositeIntegration.getRecommendations(PRODUCT_ID_OK))
         .thenReturn(
             singletonList(

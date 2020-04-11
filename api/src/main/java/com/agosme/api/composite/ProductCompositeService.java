@@ -56,7 +56,7 @@ public interface ProductCompositeService {
                 "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.")
       })
   @GetMapping(value = "/product-composite/{productId}", produces = "application/json")
-  ProductAggregate getProduct(@PathVariable int productId);
+  ProductAggregate getCompositeProduct(@PathVariable int productId);
 
   /**
    * Sample usage:

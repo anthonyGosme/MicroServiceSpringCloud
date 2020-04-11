@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ProductCompositeServiceImpl implements ProductCompositeService {
   private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeServiceImpl.class);
   private final ServiceUtil serviceUtil;
-  private ProductCompositeIntegration integration;
+  private final ProductCompositeIntegration integration;
 
   @Autowired
   public ProductCompositeServiceImpl(
@@ -82,9 +82,9 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   }
 
   @Override
-  public ProductAggregate getProduct(int productId) {
+  public ProductAggregate getCompositeProduct(int productId) {
 
-    Product product = integration.getProduct(productId);
+    Product product = integration.getProduct(productId).block();
     if (product == null)
       throw new NotFoundException("No product found for productId: " + productId);
 
@@ -129,7 +129,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                 .map(
                     r ->
                         new RecommendationSummary(
-                            r.getRecommendationId(), r.getAuthor(), r.getRate(),r.getContent()))
+                            r.getRecommendationId(), r.getAuthor(), r.getRate(), r.getContent()))
                 .collect(Collectors.toList());
 
     // 3. Copy summary review info, if available
@@ -137,7 +137,10 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
         (reviews == null)
             ? null
             : reviews.stream()
-                .map(r -> new ReviewSummary(r.getReviewId(), r.getAuthor(), r.getSubject(),r.getContent()))
+                .map(
+                    r ->
+                        new ReviewSummary(
+                            r.getReviewId(), r.getAuthor(), r.getSubject(), r.getContent()))
                 .collect(Collectors.toList());
 
     // 4. Create info regarding the involved microservices addresses

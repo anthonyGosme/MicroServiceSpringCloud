@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -35,26 +36,23 @@ public class ProductServiceApplicationTests {
   }
 
   @Test
-  public void getProductById() {
-
+  public void getProductByIdWebflux() {
     int productId = 1;
     WebTestClient.BodyContentSpec ret =
     postAndVerifyProduct(productId, OK);
-
-    assertTrue(repository.findByProductId(productId).isPresent());
-
-
+    assertNotNull(repository.findByProductId(productId).block());
    getAndVerifyProduct(productId, OK).jsonPath("$.productId").isEqualTo(productId);
   }
 
+
   @Test
-  public void duplicateError() {
+  public void duplicateErrorWebflux() {
 
     int productId = 1;
 
     postAndVerifyProduct(productId, OK);
 
-    assertTrue(repository.findByProductId(productId).isPresent());
+    assertNotNull(repository.findByProductId(productId).block());
 
     postAndVerifyProduct(productId, UNPROCESSABLE_ENTITY)
         .jsonPath("$.path")
@@ -64,15 +62,15 @@ public class ProductServiceApplicationTests {
   }
 
   @Test
-  public void deleteProduct() {
+  public void deleteProductWebflux() {
 
     int productId = 1;
 
     postAndVerifyProduct(productId, OK);
-    assertTrue(repository.findByProductId(productId).isPresent());
+    assertNotNull(repository.findByProductId(productId).block());
 
     deleteAndVerifyProduct(productId, OK);
-    assertFalse(repository.findByProductId(productId).isPresent());
+    assertNotNull(repository.findByProductId(productId).block());
 
     deleteAndVerifyProduct(productId, OK);
   }
