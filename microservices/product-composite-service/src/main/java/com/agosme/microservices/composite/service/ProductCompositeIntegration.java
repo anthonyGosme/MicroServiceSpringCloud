@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,12 +24,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import static org.springframework.http.HttpMethod.GET;
 import static reactor.core.publisher.Flux.empty;
 
+@EnableBinding(MessageSources.class)
 @Component
 public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
@@ -41,9 +39,12 @@ public class ProductCompositeIntegration
   private final String reviewServiceUrl;
   private final WebClient webClient;
 
+  private MessageSources messageSources;
+
   @Autowired
   public ProductCompositeIntegration(
       WebClient.Builder webClient,
+      MessageSources messageSources,
       RestTemplate restTemplate,
       ObjectMapper mapper,
       @Value("${app.product-service.host}") String productServiceHost,
@@ -52,9 +53,11 @@ public class ProductCompositeIntegration
       @Value("${app.recommendation-service.port}") int recommendationServicePort,
       @Value("${app.review-service.host}") String reviewServiceHost,
       @Value("${app.review-service.port}") int reviewServicePort) {
+
     this.webClient = webClient.build();
     this.restTemplate = restTemplate;
     this.mapper = mapper;
+    this.messageSources = messageSources;
 
     productServiceUrl = "http://" + productServiceHost + ":" + productServicePort + "/product/";
     recommendationServiceUrl =
@@ -132,6 +135,7 @@ public class ProductCompositeIntegration
       return ex.getMessage();
     }
   }
+
   protected String getErrorMessage(WebClientResponseException ex) {
     try {
       return mapper.readValue(ex.getResponseBodyAsString(), HttpErrorInfo.class).getMessage();
@@ -139,6 +143,7 @@ public class ProductCompositeIntegration
       return ex.getMessage();
     }
   }
+
   @Override
   public Recommendation createRecommendation(Recommendation body) {
 
@@ -159,15 +164,19 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Recommendation> getRecommendations(int productId) {
 
-      String url = recommendationServiceUrl + productId;
+    String url = recommendationServiceUrl + productId;
 
+    LOG.debug("Will call the getRecommendations API on URL: {}", url);
 
-      LOG.debug("Will call the getRecommendations API on URL: {}", url);
-
-      // Return an empty result if something goes wrong to make it possible for the composite service to return partial responses
-      return webClient.get().uri(url).retrieve().bodyToFlux(Recommendation.class).log().onErrorResume(error -> empty());
-
-
+    // Return an empty result if something goes wrong to make it possible for the composite service
+    // to return partial responses
+    return webClient
+        .get()
+        .uri(url)
+        .retrieve()
+        .bodyToFlux(Recommendation.class)
+        .log()
+        .onErrorResume(error -> empty());
   }
 
   @Override
@@ -203,13 +212,16 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Review> getReviews(int productId) {
 
-      String url = reviewServiceUrl + productId;
+    String url = reviewServiceUrl + productId;
 
-      LOG.debug("Will call getReviews API on URL: {}", url);
-      return webClient.get().uri(url).retrieve().bodyToFlux(Review.class).log().onErrorResume(error -> empty());
-
-
-
+    LOG.debug("Will call getReviews API on URL: {}", url);
+    return webClient
+        .get()
+        .uri(url)
+        .retrieve()
+        .bodyToFlux(Review.class)
+        .log()
+        .onErrorResume(error -> empty());
   }
 
   protected RuntimeException handleHttpClientException(HttpClientErrorException ex) {
@@ -234,14 +246,13 @@ public class ProductCompositeIntegration
       return ex;
     }
 
-    WebClientResponseException wcre = (WebClientResponseException)ex;
+    WebClientResponseException wcre = (WebClientResponseException) ex;
 
     switch (wcre.getStatusCode()) {
-
       case NOT_FOUND:
         return new NotFoundException(getErrorMessage(wcre));
 
-      case UNPROCESSABLE_ENTITY :
+      case UNPROCESSABLE_ENTITY:
         return new InvalidInputException(getErrorMessage(wcre));
 
       default:

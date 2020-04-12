@@ -4,17 +4,13 @@ import com.agosme.api.composite.*;
 import com.agosme.api.core.product.Product;
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.review.Review;
-import com.agosme.util.exceptions.NotFoundException;
 import com.agosme.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,12 +84,17 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   @Override
   public Mono<ProductAggregate> getCompositeProduct(int productId) {
     return Mono.zip(
-            values -> createProductAggregate((Product) values[0], (List<Recommendation>) values[1], (List<Review>) values[2], serviceUtil.getServiceAddress()),
+            values ->
+                createProductAggregate(
+                    (Product) values[0],
+                    (List<Recommendation>) values[1],
+                    (List<Review>) values[2],
+                    serviceUtil.getServiceAddress()),
             integration.getProduct(productId),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
-            .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
-            .log();
+        .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
+        .log();
   }
 
   @Override

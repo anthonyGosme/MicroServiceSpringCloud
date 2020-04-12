@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.client.RestTemplate;
@@ -23,7 +24,7 @@ import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 @EnableSwagger2WebFlux
 @SpringBootApplication
 @ComponentScan("com.agosme")
-public class ProductCompositeServiceApplication {
+public class ProductCompositeServiceApplication  {
   private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeServiceImpl.class);
 
   @Value("${api.common.version}")

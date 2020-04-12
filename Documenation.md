@@ -52,7 +52,7 @@ recommendation-service
 ./gradlew build
 ./gradlew test
 ./gradlew  :microservices:product-service:test
-
+./gradlew  :microservices:product-composite:build
 ## test
 curl http://localhost:7000/product-composite/13 -i
  curl http://localhost:7000/product-composite/113 -s | jq
