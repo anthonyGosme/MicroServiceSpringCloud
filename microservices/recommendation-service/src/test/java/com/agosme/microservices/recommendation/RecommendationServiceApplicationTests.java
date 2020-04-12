@@ -28,7 +28,7 @@ public class RecommendationServiceApplicationTests {
 
   @Before
   public void setupDb() {
-    repository.deleteAll();
+    repository.deleteAll().block();
   }
 
   @Test
@@ -40,7 +40,7 @@ public class RecommendationServiceApplicationTests {
     postAndVerifyRecommendation(productId, 2, OK);
     postAndVerifyRecommendation(productId, 3, OK);
 
-    assertEquals(3, repository.findByProductId(productId).size());
+    assertEquals(3, (long)repository.findByProductId(productId).count().block());
 
     getAndVerifyRecommendationsByProductId(productId, OK)
         .jsonPath("$.length()")
@@ -81,10 +81,10 @@ public class RecommendationServiceApplicationTests {
     int recommendationId = 1;
 
     postAndVerifyRecommendation(productId, recommendationId, OK);
-    assertEquals(1, repository.findByProductId(productId).size());
+    assertEquals(1, (long)repository.findByProductId(productId).count().block());
 
     deleteAndVerifyRecommendationsByProductId(productId, OK);
-    assertEquals(0, repository.findByProductId(productId).size());
+    assertEquals(0, (long)repository.findByProductId(productId).count().block());
 
     deleteAndVerifyRecommendationsByProductId(productId, OK);
   }

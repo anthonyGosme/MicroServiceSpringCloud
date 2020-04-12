@@ -20,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpMethod.GET;
+import static reactor.core.publisher.Flux.empty;
 
 @Component
 public class ProductCompositeIntegration
@@ -155,26 +157,17 @@ public class ProductCompositeIntegration
   }
 
   @Override
-  public List<Recommendation> getRecommendations(int productId) {
-    try {
+  public Flux<Recommendation> getRecommendations(int productId) {
+
       String url = recommendationServiceUrl + productId;
 
-      LOG.debug("Will call getRecommendations API on URL: {}", url);
-      List<Recommendation> recommendations =
-          restTemplate
-              .exchange(url, GET, null, new ParameterizedTypeReference<List<Recommendation>>() {})
-              .getBody();
 
-      LOG.debug(
-          "Found {} recommendations for a product with id: {}", recommendations.size(), productId);
-      return recommendations;
+      LOG.debug("Will call the getRecommendations API on URL: {}", url);
 
-    } catch (Exception ex) {
-      LOG.warn(
-          "Got an exception while requesting recommendations, return zero recommendations: {}",
-          ex.getMessage());
-      return new ArrayList<>();
-    }
+      // Return an empty result if something goes wrong to make it possible for the composite service to return partial responses
+      return webClient.get().uri(url).retrieve().bodyToFlux(Recommendation.class).log().onErrorResume(error -> empty());
+
+
   }
 
   @Override

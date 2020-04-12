@@ -10,9 +10,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.Collections.singletonList;
 
 @RestController
 public class ProductCompositeServiceImpl implements ProductCompositeService {
@@ -88,12 +94,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     if (product == null)
       throw new NotFoundException("No product found for productId: " + productId);
 
-    List<Recommendation> recommendations = integration.getRecommendations(productId);
+    Flux<Recommendation> recommendations = integration.getRecommendations(productId);
 
     List<Review> reviews = integration.getReviews(productId);
-
+    //new ArrayList((Collection) recommendations.collectList()) ;
     return createProductAggregate(
-        product, recommendations, reviews, serviceUtil.getServiceAddress());
+        product,
+            new ArrayList((Collection) recommendations.collectList()), reviews, serviceUtil.getServiceAddress());
   }
 
   @Override
