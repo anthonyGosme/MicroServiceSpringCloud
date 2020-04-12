@@ -138,8 +138,8 @@ fi
 if [[ $@ == *"skiptest"* ]]
 then
     echo "We are done starting"
+    docker ps
     exit
-
 fi
 waitForService curl -X DELETE http://$HOST:$PORT/product-composite/13
 

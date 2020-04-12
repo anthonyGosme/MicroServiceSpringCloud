@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 date
-./gradlew clean build
+./gradlew clean build --info
 docker-compose build
 ./test-em-all.bash start stop
 date

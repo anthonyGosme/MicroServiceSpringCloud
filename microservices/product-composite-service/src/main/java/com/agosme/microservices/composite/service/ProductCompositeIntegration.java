@@ -201,24 +201,15 @@ public class ProductCompositeIntegration
   }
 
   @Override
-  public List<Review> getReviews(int productId) {
-    try {
+  public Flux<Review> getReviews(int productId) {
+
       String url = reviewServiceUrl + productId;
 
       LOG.debug("Will call getReviews API on URL: {}", url);
-      List<Review> reviews =
-          restTemplate
-              .exchange(url, GET, null, new ParameterizedTypeReference<List<Review>>() {})
-              .getBody();
+      return webClient.get().uri(url).retrieve().bodyToFlux(Review.class).log().onErrorResume(error -> empty());
 
-      LOG.debug("Found {} reviews for a product with id: {}", reviews.size(), productId);
-      return reviews;
 
-    } catch (Exception ex) {
-      LOG.warn(
-          "Got an exception while requesting reviews, return zero reviews: {}", ex.getMessage());
-      return new ArrayList<>();
-    }
+
   }
 
   protected RuntimeException handleHttpClientException(HttpClientErrorException ex) {

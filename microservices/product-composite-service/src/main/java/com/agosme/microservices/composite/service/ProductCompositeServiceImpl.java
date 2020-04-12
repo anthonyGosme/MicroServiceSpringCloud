@@ -12,13 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static java.util.Collections.singletonList;
 
 @RestController
 public class ProductCompositeServiceImpl implements ProductCompositeService {
@@ -96,11 +93,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
 
     Flux<Recommendation> recommendations = integration.getRecommendations(productId);
 
-    List<Review> reviews = integration.getReviews(productId);
-    //new ArrayList((Collection) recommendations.collectList()) ;
+    Flux<Review> reviews = integration.getReviews(productId);
+    // new ArrayList((Collection) recommendations.collectList()) ;
     return createProductAggregate(
         product,
-            new ArrayList((Collection) recommendations.collectList()), reviews, serviceUtil.getServiceAddress());
+        new ArrayList((Collection) recommendations.collectList()),
+        new ArrayList((Collection) reviews.collectList()),
+        serviceUtil.getServiceAddress());
   }
 
   @Override
