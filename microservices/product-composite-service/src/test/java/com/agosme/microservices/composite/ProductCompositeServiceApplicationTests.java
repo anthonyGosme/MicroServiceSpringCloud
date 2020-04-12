@@ -25,9 +25,8 @@ import reactor.core.publisher.Mono;
 import static java.util.Collections.singletonList;
 import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-import static org.springframework.http.HttpStatus.OK;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static reactor.core.publisher.Mono.just;
 
 @AutoConfigureWebTestClient
@@ -69,16 +68,7 @@ public class ProductCompositeServiceApplicationTests {
   @Test
   public void getProductById() {
 
-    client
-        .get()
-        .uri("/product-composite/" + PRODUCT_ID_OK)
-        .accept(APPLICATION_JSON)
-        .exchange()
-        .expectStatus()
-        .isOk()
-        .expectHeader()
-        .contentType(APPLICATION_JSON)
-        .expectBody()
+    getAndVerifyProduct(PRODUCT_ID_OK, OK)
         .jsonPath("$.productId")
         .isEqualTo(PRODUCT_ID_OK)
         .jsonPath("$.recommendations.length()")
@@ -90,16 +80,7 @@ public class ProductCompositeServiceApplicationTests {
   @Test
   public void getProductNotFound() {
 
-    client
-        .get()
-        .uri("/product-composite/" + PRODUCT_ID_NOT_FOUND)
-        .accept(APPLICATION_JSON)
-        .exchange()
-        .expectStatus()
-        .isNotFound()
-        .expectHeader()
-        .contentType(APPLICATION_JSON)
-        .expectBody()
+    getAndVerifyProduct(PRODUCT_ID_NOT_FOUND, NOT_FOUND)
         .jsonPath("$.path")
         .isEqualTo("/product-composite/" + PRODUCT_ID_NOT_FOUND)
         .jsonPath("$.message")
@@ -160,12 +141,12 @@ public class ProductCompositeServiceApplicationTests {
     return client
         .get()
         .uri("/product-composite/" + productId)
-        .accept(APPLICATION_JSON)
+        .accept(APPLICATION_JSON_UTF8)
         .exchange()
         .expectStatus()
         .isEqualTo(expectedStatus)
         .expectHeader()
-        .contentType(APPLICATION_JSON)
+        .contentType(APPLICATION_JSON_UTF8)
         .expectBody();
   }
 

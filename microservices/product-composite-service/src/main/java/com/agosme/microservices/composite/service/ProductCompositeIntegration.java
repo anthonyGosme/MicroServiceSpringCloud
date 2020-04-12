@@ -6,6 +6,7 @@ import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.recommendation.RecommendationService;
 import com.agosme.api.core.review.Review;
 import com.agosme.api.core.review.ReviewService;
+import com.agosme.api.event.Event;
 import com.agosme.util.exceptions.InvalidInputException;
 import com.agosme.util.exceptions.NotFoundException;
 import com.agosme.util.http.HttpErrorInfo;
@@ -15,9 +16,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
@@ -25,6 +26,8 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
+import static com.agosme.api.event.Event.Type.CREATE;
+import static com.agosme.api.event.Event.Type.DELETE;
 import static reactor.core.publisher.Flux.empty;
 
 @EnableBinding(MessageSources.class)
@@ -32,7 +35,7 @@ import static reactor.core.publisher.Flux.empty;
 public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
-  private final RestTemplate restTemplate;
+  // private final RestTemplate restTemplate;
   private final ObjectMapper mapper;
   private final String productServiceUrl;
   private final String recommendationServiceUrl;
@@ -45,7 +48,6 @@ public class ProductCompositeIntegration
   public ProductCompositeIntegration(
       WebClient.Builder webClient,
       MessageSources messageSources,
-      RestTemplate restTemplate,
       ObjectMapper mapper,
       @Value("${app.product-service.host}") String productServiceHost,
       @Value("${app.product-service.port}") int productServicePort,
@@ -55,7 +57,7 @@ public class ProductCompositeIntegration
       @Value("${app.review-service.port}") int reviewServicePort) {
 
     this.webClient = webClient.build();
-    this.restTemplate = restTemplate;
+
     this.mapper = mapper;
     this.messageSources = messageSources;
 
@@ -72,19 +74,10 @@ public class ProductCompositeIntegration
 
   @Override
   public Product createProduct(Product body) {
-
-    try {
-      String url = productServiceUrl;
-      LOG.debug("Will post a new product to URL: {}", url);
-
-      Product product = restTemplate.postForObject(url, body, Product.class);
-      LOG.debug("Created a product with id: {}", product.getProductId());
-
-      return product;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputProducts()
+        .send(MessageBuilder.withPayload(new Event(CREATE, body.getProductId(), body)).build());
+    return body;
   }
 
   @Override
@@ -117,15 +110,9 @@ public class ProductCompositeIntegration
 
   @Override
   public void deleteProduct(int productId) {
-    try {
-      String url = productServiceUrl + "/" + productId;
-      LOG.debug("Will call the deleteProduct API on URL: {}", url);
-
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputProducts()
+        .send(MessageBuilder.withPayload(new Event(DELETE, productId, null)).build());
   }
 
   protected String getErrorMessage(HttpClientErrorException ex) {
@@ -147,18 +134,10 @@ public class ProductCompositeIntegration
   @Override
   public Recommendation createRecommendation(Recommendation body) {
 
-    try {
-      String url = recommendationServiceUrl;
-      LOG.debug("Will post a new recommendation to URL: {}", url);
-
-      Recommendation recommendation = restTemplate.postForObject(url, body, Recommendation.class);
-      LOG.debug("Created a recommendation with id: {}", recommendation.getProductId());
-
-      return recommendation;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputRecommendations()
+        .send(MessageBuilder.withPayload(new Event(CREATE, body.getProductId(), body)).build());
+    return body;
   }
 
   @Override
@@ -181,32 +160,17 @@ public class ProductCompositeIntegration
 
   @Override
   public void deleteRecommendations(int productId) {
-    try {
-      String url = recommendationServiceUrl + productId;
-      LOG.debug("Will call the deleteRecommendations API on URL: {}", url);
-
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputRecommendations()
+        .send(MessageBuilder.withPayload(new Event(DELETE, productId, null)).build());
   }
 
   @Override
   public Review createReview(Review body) {
-
-    try {
-      String url = reviewServiceUrl;
-      LOG.debug("Will post a new review to URL: {}", url);
-
-      Review review = restTemplate.postForObject(url, body, Review.class);
-      LOG.debug("Created a review with id: {}", review.getProductId());
-
-      return review;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputReviews()
+        .send(MessageBuilder.withPayload(new Event(CREATE, body.getProductId(), body)).build());
+    return body;
   }
 
   @Override
@@ -264,14 +228,8 @@ public class ProductCompositeIntegration
 
   @Override
   public void deleteReviews(int productId) {
-    try {
-      String url = reviewServiceUrl + productId;
-      LOG.debug("Will call the deleteReviews API on URL: {}", url);
-
-      restTemplate.delete(url);
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }
+    messageSources
+        .outputReviews()
+        .send(MessageBuilder.withPayload(new Event(DELETE, productId, null)).build());
   }
 }
