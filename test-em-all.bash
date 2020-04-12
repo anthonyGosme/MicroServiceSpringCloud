@@ -135,6 +135,12 @@ then
     docker-compose up -d
 fi
 
+if [[ $@ == *"skiptest"* ]]
+then
+    echo "We are done starting"
+    exit
+
+fi
 waitForService curl -X DELETE http://$HOST:$PORT/product-composite/13
 
 setupTestdata
