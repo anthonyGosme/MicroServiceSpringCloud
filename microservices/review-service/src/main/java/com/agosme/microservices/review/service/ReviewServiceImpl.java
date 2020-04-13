@@ -72,6 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
   private <T> Flux<T> asyncFlux(Iterable<T> iterable) {
     return Flux.fromIterable(iterable).publishOn(scheduler);
   }
+
   protected List<Review> getByProductId(int productId) {
     List<ReviewEntity> entityList = repository.findByProductId(productId);
     List<Review> list = mapper.entityListToApiList(entityList);
