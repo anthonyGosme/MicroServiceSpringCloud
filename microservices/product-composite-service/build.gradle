@@ -51,11 +51,13 @@ dependencies {
     implementation("io.springfox:springfox-schema:${springfoxVersion}-39")
     implementation("io.springfox:springfox-spring-web:${springfoxVersion}-38")
 
-    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
-    implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')
+
+    testImplementation('io.projectreactor:reactor-test')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
-    testImplementation('io.projectreactor:reactor-test')
+
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')
     testImplementation('org.springframework.cloud:spring-cloud-stream-test-support')
 }
 

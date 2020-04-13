@@ -10,25 +10,27 @@ import com.agosme.util.http.ServiceUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import static reactor.core.publisher.Mono.error;
-
+@EnableBinding(ProductMapper.class)
 @RestController
 
 public class ProductServiceImpl implements ProductService {
   private static final Logger LOG = LoggerFactory.getLogger(ProductServiceImpl.class);
   private final ServiceUtil serviceUtil;
-  @Autowired private  ProductRepository repository;
+  private  ProductRepository repository;
 
   private final ProductMapper mapper;
   @Autowired
-  public ProductServiceImpl( ProductMapper mapper, ServiceUtil serviceUtil) {
+  public ProductServiceImpl(ProductMapper mapper, ServiceUtil serviceUtil, ProductRepository repository) {
 
     this.mapper = mapper;
     this.serviceUtil = serviceUtil;
+    this.repository = repository;
   }
 
   @Override
