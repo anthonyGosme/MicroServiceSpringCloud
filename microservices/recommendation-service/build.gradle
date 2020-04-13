@@ -26,6 +26,7 @@ repositories {
 
 ext {
     mapstructVersion = "1.3.0.Beta2"
+    springCloudVersion = "Hoxton.RELEASE"
 }
 dependencies {
     // lombok
@@ -53,4 +54,15 @@ dependencies {
     //mongo
     testImplementation('de.flapdoodle.embed:de.flapdoodle.embed.mongo')
     implementation('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+
+    //cloud
+    testImplementation('org.springframework.cloud:spring-cloud-stream-test-support')
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
