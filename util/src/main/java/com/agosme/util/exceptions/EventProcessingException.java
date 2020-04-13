@@ -1,4 +1,4 @@
-package com.agosme.microservices.product.service;
+package com.agosme.util.exceptions;
 
 public class EventProcessingException extends RuntimeException {
     public EventProcessingException() {

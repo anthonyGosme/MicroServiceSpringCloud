@@ -3,6 +3,7 @@ package com.agosme.microservices.product.service;
 import com.agosme.api.core.product.Product;
 import com.agosme.api.core.product.ProductService;
 import com.agosme.api.event.Event;
+import com.agosme.util.exceptions.EventProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
