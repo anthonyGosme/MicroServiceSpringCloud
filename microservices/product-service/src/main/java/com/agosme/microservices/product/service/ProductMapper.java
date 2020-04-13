@@ -5,8 +5,10 @@ import com.agosme.microservices.product.persistance.ProductEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.springframework.stereotype.Service;
 
 @Mapper(componentModel = "spring")
+@Service
 public interface ProductMapper {
 
     @Mappings({
