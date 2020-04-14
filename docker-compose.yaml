@@ -13,6 +13,7 @@ services:
         condition: service_healthy
     ports:
       - "7001:8080"
+      - "17001:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -29,6 +30,7 @@ services:
         condition: service_healthy
     ports:
       - "7002:8080"
+      - "17002:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -43,6 +45,7 @@ services:
         condition: service_healthy
     ports:
       - "7003:8080"
+      - "17003:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -52,6 +55,8 @@ services:
     mem_limit: 450m
     ports:
       - "8080:8080"
+      - "8001:8001"
+      - "8002:8002"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:

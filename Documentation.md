@@ -101,6 +101,9 @@ date && ./gradlew clean build && docker-compose build && ./test-em-all.bash star
 
 ./gradlew microservices:product-service:test  ProductServiceApplicationTests info
 
+./gradlew :microservices:product-composite-service:bootRun --debug-jvm
+
+
 #enter inside DB via docker-compose
 docker-compose exec mongodb mongo --quiet
 docker-compose exec mysql mysql -uuser -p review-db
@@ -110,3 +113,6 @@ docker-compose exec mysql mysql -uuser -p review-db
 
 #swaggee openapi
 http://localhost:7000/swagger-ui.html
+
+#Rabbit MQ
+http://localhost:15672/#/queues guest gest

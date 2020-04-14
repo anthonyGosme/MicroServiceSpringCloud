@@ -1,7 +1,8 @@
 FROM openjdk:12.0.2
 EXPOSE 8080
+EXPOSE 8001
 ADD ./build/libs/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8001", "-jar","/app.jar"]
 
 
 # ./gradlew :microservices:product-service:build

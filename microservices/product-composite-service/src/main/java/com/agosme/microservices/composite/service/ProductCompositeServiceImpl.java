@@ -100,15 +100,20 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   @Override
   public void deleteCompositeProduct(int productId) {
 
-    LOG.debug("deleteCompositeProduct: Deletes a product aggregate for productId: {}", productId);
+    try {
 
-    integration.deleteProduct(productId);
+      LOG.debug("deleteCompositeProduct: Deletes a product aggregate for productId: {}", productId);
 
-    integration.deleteRecommendations(productId);
+      integration.deleteProduct(productId);
+      integration.deleteRecommendations(productId);
+      integration.deleteReviews(productId);
 
-    integration.deleteReviews(productId);
+      LOG.debug("deleteCompositeProduct: aggregate entities deleted for productId: {}", productId);
 
-    LOG.debug("getCompositeProduct: aggregate entities deleted for productId: {}", productId);
+    } catch (RuntimeException re) {
+      LOG.warn("deleteCompositeProduct failed: {}", re.toString());
+      throw re;
+    }
   }
 
   private ProductAggregate createProductAggregate(
