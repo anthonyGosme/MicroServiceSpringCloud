@@ -7,14 +7,32 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "7001:8080"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      interval: 10s
+      timeout: 5s
   recommendation:
     build: microservices/recommendation-service
     mem_limit: 450m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    ports:
+      - "7002:8080"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      interval: 10s
+      timeout: 5s
   review:
     build: microservices/review-service
     mem_limit: 350m
@@ -23,6 +41,12 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    ports:
+      - "7003:8080"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      interval: 10s
+      timeout: 5s
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 450m
@@ -30,7 +54,13 @@ services:
       - "8080:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
-
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      interval: 10s
+      timeout: 5s
   # $ mongo
   mongodb:
     image: mongo:3.6.9

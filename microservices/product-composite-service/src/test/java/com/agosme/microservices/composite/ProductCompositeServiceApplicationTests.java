@@ -1,8 +1,5 @@
 package com.agosme.microservices.composite;
 
-import com.agosme.api.composite.ProductAggregate;
-import com.agosme.api.composite.RecommendationSummary;
-import com.agosme.api.composite.ReviewSummary;
 import com.agosme.api.core.product.Product;
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.review.Review;
@@ -27,7 +24,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
-import static reactor.core.publisher.Mono.just;
 
 @AutoConfigureWebTestClient
 @SpringBootTest(webEnvironment = RANDOM_PORT)
@@ -88,45 +84,6 @@ public class ProductCompositeServiceApplicationTests {
   }
 
   @Test
-  public void createCompositeProduct1() {
-
-    ProductAggregate compositeProduct = new ProductAggregate(1, "name", 1, null, null, null);
-
-    postAndVerifyProduct(compositeProduct, OK);
-  }
-
-  @Test
-  public void createCompositeProduct2() {
-    ProductAggregate compositeProduct =
-        new ProductAggregate(
-            1,
-            "name",
-            1,
-            singletonList(new RecommendationSummary(1, "a", 1, "c")),
-            singletonList(new ReviewSummary(1, "a", "s", "c")),
-            null);
-
-    postAndVerifyProduct(compositeProduct, OK);
-  }
-
-  @Test
-  public void deleteCompositeProduct() {
-    ProductAggregate compositeProduct =
-        new ProductAggregate(
-            1,
-            "name",
-            1,
-            singletonList(new RecommendationSummary(1, "a", 1, "c")),
-            singletonList(new ReviewSummary(1, "a", "s", "c")),
-            null);
-
-    postAndVerifyProduct(compositeProduct, OK);
-
-    deleteAndVerifyProduct(compositeProduct.getProductId(), OK);
-    deleteAndVerifyProduct(compositeProduct.getProductId(), OK);
-  }
-
-  @Test
   public void getProductInvalidInput() {
 
     getAndVerifyProduct(PRODUCT_ID_INVALID, UNPROCESSABLE_ENTITY)
@@ -148,24 +105,5 @@ public class ProductCompositeServiceApplicationTests {
         .expectHeader()
         .contentType(APPLICATION_JSON_UTF8)
         .expectBody();
-  }
-
-  private void postAndVerifyProduct(ProductAggregate compositeProduct, HttpStatus expectedStatus) {
-    client
-        .post()
-        .uri("/product-composite")
-        .body(just(compositeProduct), ProductAggregate.class)
-        .exchange()
-        .expectStatus()
-        .isEqualTo(expectedStatus);
-  }
-
-  private void deleteAndVerifyProduct(int productId, HttpStatus expectedStatus) {
-    client
-        .delete()
-        .uri("/product-composite/" + productId)
-        .exchange()
-        .expectStatus()
-        .isEqualTo(expectedStatus);
   }
 }
