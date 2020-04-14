@@ -84,7 +84,8 @@ echo 'new byte[500_000_000]' | docker run --rm -i -m=1024M openjdk:9-jdk jshell 
 docker-compose logs product
 docker system prune -f --volumes
 docker ps --format {{.Names}}
-
+docker images -f dangling=true
+docker-compose down --remove-orphans
 # restart 
 docker-compose up -d --scale product=0
 docker-compose up -d --scale product=1
