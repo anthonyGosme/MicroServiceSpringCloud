@@ -1,6 +1,21 @@
 version: '2.1'
 
 services:
+  review:
+    build: microservices/review-service
+    mem_limit: 350m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      mysql:
+        condition: service_healthy
+    #    ports:
+    #      - "7003:8080"
+    #      - "17003:8001"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      interval: 10s
+      timeout: 5s
   product:
     build: microservices/product-service
     mem_limit: 450m
@@ -35,21 +50,7 @@ services:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
       timeout: 5s
-  review:
-    build: microservices/review-service
-    mem_limit: 350m
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-    depends_on:
-      mysql:
-        condition: service_healthy
-    ports:
-      - "7003:8080"
-      - "17003:8001"
-    healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 10s
-      timeout: 5s
+
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 450m

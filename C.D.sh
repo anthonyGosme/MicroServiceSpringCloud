@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+  ./gradlew clean build -x test
   echo usage ./C.I.sh docker-compose-custo
   yaml=docker-compose.yaml
 

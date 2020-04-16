@@ -86,9 +86,14 @@ docker system prune -f --volumes
 docker ps --format {{.Names}}
 docker images -f dangling=true
 docker-compose down --remove-orphans
-# restart 
+#ip check
+docker-compose exec product-composite getent hosts review
+docker-compose exec --index=1 review cat /etc/hosts
+docker-compose exec --index=2 review cat /etc/hosts
+# test container service ip used 
 docker-compose up -d --scale product=0
 docker-compose up -d --scale product=1
+curl localhost:8080/product-composite/2 -s |  jq -r .serviceAddresses.rev
 
 # continous integration
 date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date

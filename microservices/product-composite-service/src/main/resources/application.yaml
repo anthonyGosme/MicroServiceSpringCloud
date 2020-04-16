@@ -79,7 +79,7 @@ logging:
     com.agosme: DEBUG
 
 spring.cloud.stream:
-  defaultBinder: kafka
+  defaultBinder: rabbit
   default.contentType: application/json
   bindings:
     output-products:

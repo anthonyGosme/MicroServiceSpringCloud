@@ -2,23 +2,31 @@ package com.agosme.api.composite;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
-public class ProductAggregate {
-  private int productId;
-  private String name;
-  private int weight;
-  private List<RecommendationSummary> recommendations;
-  private List<ReviewSummary> reviews;
 
-  @JsonIgnore
+public class ProductAggregate {
+  private final int productId;
+  private final String name;
+  private final int weight;
+  private final List<RecommendationSummary> recommendations;
+  private final List<ReviewSummary> reviews;
+
+//  @JsonIgnore
   private ServiceAddresses serviceAddresses;
 
-  public ProductAggregate() {}
+  public ProductAggregate() {
+    this.productId = 0;
+    this.name = null;
+    this.weight = 0;
+    this.recommendations = null;
+    this.reviews = null;
+    this.serviceAddresses = null;
+  }
 
   public ProductAggregate(
       int productId,

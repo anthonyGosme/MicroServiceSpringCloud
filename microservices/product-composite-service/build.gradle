@@ -1,7 +1,7 @@
 buildscript {
     ext {
-     //   springBootVersion = '2.2.5.RELEASE'
-        springBootVersion = '2.1.2.RELEASE'
+        springBootVersion = '2.2.5.RELEASE'
+       // springBootVersion = '2.1.2.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -18,13 +18,13 @@ apply plugin: 'io.spring.dependency-management'
 
 group = 'com.agosme.microservices.composite'
 version = '1.0.0-SNAPSHOT'
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 ext {
 //	springfoxVersion = "3.0.0-SNAPSHOT"
     springfoxVersion = "3.0.0-20190808.104142"
-  //  springCloudVersion = "Hoxton.RELEASE"
-    springCloudVersion = "Greenwich.RELEASE"
+    springCloudVersion = "Hoxton.RELEASE"
+   // springCloudVersion = "Greenwich.RELEASE"
 }
 
 repositories {
