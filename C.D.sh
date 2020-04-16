@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-
-  ./gradlew clean build -x test
-  echo usage ./C.I.sh docker-compose-custo
+set -e
+  ./gradlew build -x test
+  echo usage ./C.D.sh docker-compose-custo
   yaml=docker-compose.yaml
 
   if [ "$1" ]; then

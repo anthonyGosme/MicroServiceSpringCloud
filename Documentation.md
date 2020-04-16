@@ -5,12 +5,12 @@ spring init \
 --build=gradle \
 --java-version=11 \
 --packaging=jar \
---name=product-service \
---package-name=com.agosme.microservices.core.product \
---groupId=com.agosme.microservices.core.product \
---dependencies=actuator,webflux \
+--name= \
+--package-name=com.agosme.microservices.cloud.eureka-server \
+--groupId=com.agosme.microservices.cloud.eureka-server \
+--dependencies=actuator \
 --version=1.0.0-SNAPSHOT \
-product-service
+eureka-server
 
 spring init \
 --boot-version=2.2.5.RELEASE \
@@ -53,11 +53,15 @@ recommendation-service
 ./gradlew test
 ./gradlew  :microservices:product-service:test
 ./gradlew  :microservices:product-composite:build
+
 ## test
 curl http://localhost:7000/product-composite/13 -i
  curl http://localhost:7000/product-composite/113 -s | jq
  curl http://localhost:7000/product-composite/213 -s | jq
  
+# set java intellij 
+export  JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-11.0.7.jdk/Contents/Home
+
 ## DEBUG ITH INTELLIJ
 start all services
 add in composition project build.gradle conf -> test.doFirst {

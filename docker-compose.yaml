@@ -106,3 +106,9 @@ services:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
       timeout: 5s
+  eureka:
+    build: spring-cloud/eureka-server
+    mem_limit: 350m
+    ports:
+      - "8761:8761"
+
