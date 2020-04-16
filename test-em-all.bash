@@ -119,6 +119,9 @@ function waitForService() {
         if [[ $n == 10 ]]
         then
             echo " Give up"
+            echo "Stopping the test environment..."
+            echo "$ docker-compose down --remove-orphans"
+            docker-compose down --remove-orphans
             exit 1
         else
             sleep 6

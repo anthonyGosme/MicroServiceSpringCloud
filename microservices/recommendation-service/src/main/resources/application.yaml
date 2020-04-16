@@ -15,7 +15,7 @@ logging:
 
 
 spring.cloud.stream:
-  defaultBinder: rabbit
+  defaultBinder: kafka
   default.contentType: application/json
   bindings.input:
     destination: recommendations

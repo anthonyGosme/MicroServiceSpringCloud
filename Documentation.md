@@ -116,3 +116,7 @@ http://localhost:7000/swagger-ui.html
 
 #Rabbit MQ
 http://localhost:15672/#/queues guest gest
+
+#kafka
+docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper --list
+docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --describe --zookeeper zookeeper --topic products
