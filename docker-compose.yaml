@@ -13,8 +13,8 @@ services:
       - MYSQL_PASSWORD=pwd
     healthcheck:
       test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
-      interval: 10s
-      timeout: 5s
+      interval: 20s
+      timeout: 10s
       retries: 10
   review:
     build: microservices/review-service
@@ -29,8 +29,9 @@ services:
     #      - "17003:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 10
   product:
     build: microservices/product-service
     mem_limit: 350m
@@ -46,8 +47,9 @@ services:
       - "17001:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 10
   recommendation:
     build: microservices/recommendation-service
     mem_limit: 350m
@@ -63,14 +65,13 @@ services:
       - "7120-7130:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 10s
-      timeout: 5s
-
+      interval: 30s
+      timeout: 10s
+      retries: 10
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 350m
     ports:
-      - "8080:8080"
       - "8001:8001"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -79,9 +80,9 @@ services:
         condition: service_healthy
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 10s
-      timeout: 5s
-
+      interval: 30s
+      timeout: 10s
+      retries: 10
   mongodb:
     image: mongo:3.6.9
     mem_limit: 350m
@@ -90,8 +91,8 @@ services:
     command: mongod --smallfiles
     healthcheck:
       test: "mongo --eval 'db.stats().ok'"
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
       retries: 10
   rabbitmq:
     image: rabbitmq:3.7.8-management
@@ -101,8 +102,9 @@ services:
       - 15672:15672
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 10s
-      timeout: 5s
+      interval: 30s
+      timeout: 10s
+      retries: 10
   eureka:
     build: spring-cloud/eureka-server
     mem_limit: 350m
@@ -110,7 +112,13 @@ services:
       - "8761:8761"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8761/actuator/health}"
-      interval: 10s
-      timeout: 5s
-
-
+      interval: 30s
+      timeout: 10s
+      retries: 10
+  gateway:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/gateway
+    mem_limit: 350m
+    ports:
+      - "8080:8080"

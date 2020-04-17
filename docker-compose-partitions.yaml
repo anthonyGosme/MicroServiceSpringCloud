@@ -121,9 +121,7 @@ services:
     build: microservices/product-composite-service
     mem_limit: 450m
     ports:
-      - "8080:8080"
       - "8001:8001"
-      - "8002:8002"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_STREAM_BINDINGS_OUTPUT-PRODUCTS_PRODUCER_PARTITION-KEY-EXPRESSION=payload.key
@@ -183,3 +181,10 @@ services:
     mem_limit: 350m
     ports:
       - "8761:8761"
+  gateway:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/gateway
+    mem_limit: 350m
+    ports:
+      - "8080:8080"

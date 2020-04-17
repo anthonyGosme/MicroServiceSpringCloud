@@ -1,5 +1,19 @@
 # init gradle project
 
+
+spring init \
+--boot-version=2.2.5.RELEASE \
+--build=gradle \
+--java-version=11 \
+--packaging=jar \
+--name= \
+--package-name=com.agosme.microservices.cloud.gateway \
+--groupId=com.agosme.microservices.cloud.gateway \
+--dependencies=actuator \
+--version=1.0.0-SNAPSHOT \
+gateway
+
+
 spring init \
 --boot-version=2.2.5.RELEASE \
 --build=gradle \
