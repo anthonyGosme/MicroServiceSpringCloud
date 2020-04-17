@@ -1,4 +1,5 @@
 ---
+spring.application.name: application-service
 server.port: 7002
 
 spring:
