@@ -1,6 +1,18 @@
 spring.application.name: product-composite
-api:
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+ribbon:
+  ServerListRefreshInterval: 5000
+  NFLoadBalancerPingInterval: 5
 
+api:
   common:
     version: 1.0.0
     title: Sample API
@@ -63,16 +75,6 @@ api:
         This means that a delete request of a non existing product will return <b>200 Ok</b>.
 server.port: 7000
 
-app:
-  product-service:
-    host: localhost
-    port: 7001
-  recommendation-service:
-    host: localhost
-    port: 7002
-  review-service:
-    host: localhost
-    port: 7003
 
 logging:
   level:
@@ -127,5 +129,5 @@ logging:
     com.agosme: DEBUG
 
 spring.rabbitmq.host: rabbitmq
-
+eureka.client.serviceUrl.defaultZone: http://eureka:8761/eureka/
 spring.cloud.stream.kafka.binder.brokers: kafka

@@ -1,6 +1,21 @@
 version: '2.1'
 
 services:
+  mysql:
+    image: mysql:5.7
+    mem_limit: 350m
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpwd
+      - MYSQL_DATABASE=review-db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+    healthcheck:
+      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      interval: 10s
+      timeout: 5s
+      retries: 10
   review:
     build: microservices/review-service
     mem_limit: 350m
@@ -18,7 +33,7 @@ services:
       timeout: 5s
   product:
     build: microservices/product-service
-    mem_limit: 450m
+    mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -35,7 +50,7 @@ services:
       timeout: 5s
   recommendation:
     build: microservices/recommendation-service
-    mem_limit: 450m
+    mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -44,8 +59,8 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "7002:8080"
-      - "17002:8001"
+      - "7020-7030:8080"
+      - "7120-7130:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -53,11 +68,10 @@ services:
 
   product-composite:
     build: microservices/product-composite-service
-    mem_limit: 450m
+    mem_limit: 350m
     ports:
       - "8080:8080"
       - "8001:8001"
-      - "8002:8002"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -67,10 +81,10 @@ services:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
       timeout: 5s
-  # $ mongo
+
   mongodb:
     image: mongo:3.6.9
-    mem_limit: 450m
+    mem_limit: 350m
     ports:
       - "27017:27017"
     command: mongod --smallfiles
@@ -79,26 +93,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-  # $ mysql -uroot -h127.0.0.1 -p
-  mysql:
-    image: mysql:5.7
-    mem_limit: 450m
-    ports:
-      - "3306:3306"
-    environment:
-      - MYSQL_ROOT_PASSWORD=rootpwd
-      - MYSQL_DATABASE=review-db
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=pwd
-    healthcheck:
-      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
   rabbitmq:
     image: rabbitmq:3.7.8-management
-    mem_limit: 450m
+    mem_limit: 350m
     ports:
       - 5672:5672
       - 15672:15672
@@ -111,4 +108,9 @@ services:
     mem_limit: 350m
     ports:
       - "8761:8761"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8761/actuator/health}"
+      interval: 10s
+      timeout: 5s
+
 

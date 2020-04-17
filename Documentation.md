@@ -129,3 +129,10 @@ http://localhost:15672/#/queues guest gest
 #kafka
 docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper --list
 docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --describe --zookeeper zookeeper --topic products
+
+#eureka
+
+http://localhost:8761/
+http://localhost:8761/eureka/apps
+http://localhost:8761/actuator
+http://localhost:8761/actuator/health

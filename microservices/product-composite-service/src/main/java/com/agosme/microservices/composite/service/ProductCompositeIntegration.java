@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.integration.support.MessageBuilder;
@@ -37,38 +36,20 @@ public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
   private final ObjectMapper mapper;
-  private final String productServiceUrl;
-  private final String recommendationServiceUrl;
-  private final String reviewServiceUrl;
-  private final WebClient webClient;
 
+  WebClientFactory webClientFactory;
+  private final String productServiceUrl = "http://product";
+  private final String recommendationServiceUrl = "http://recommendation";
+  private final String reviewServiceUrl = "http://review";
   private MessageSources messageSources;
 
   @Autowired
   public ProductCompositeIntegration(
-      WebClient.Builder webClient,
-      MessageSources messageSources,
-      ObjectMapper mapper,
-      @Value("${app.product-service.host}") String productServiceHost,
-      @Value("${app.product-service.port}") int productServicePort,
-      @Value("${app.recommendation-service.host}") String recommendationServiceHost,
-      @Value("${app.recommendation-service.port}") int recommendationServicePort,
-      @Value("${app.review-service.host}") String reviewServiceHost,
-      @Value("${app.review-service.port}") int reviewServicePort) {
-
-    this.webClient = webClient.build();
+      MessageSources messageSources, ObjectMapper mapper, WebClient.Builder webClientBuilder) {
+    webClientFactory = new WebClientFactory(webClientBuilder);
 
     this.mapper = mapper;
     this.messageSources = messageSources;
-
-    productServiceUrl = "http://" + productServiceHost + ":" + productServicePort;
-    recommendationServiceUrl =
-        "http://"
-            + recommendationServiceHost
-            + ":"
-            + recommendationServicePort
-           ;
-    reviewServiceUrl = "http://" + reviewServiceHost + ":" + reviewServicePort;
   }
 
   @Override
@@ -81,10 +62,11 @@ public class ProductCompositeIntegration
 
   @Override
   public Mono<Product> getProduct(int productId) {
-    String url = productServiceUrl +  "/product/" + productId;
+    String url = productServiceUrl + "/product/" + productId;
     LOG.debug("Will call the getProduct API on URL: {}", url);
 
-    return webClient
+    return webClientFactory
+        .getWebClient()
         .get()
         .uri(url)
         .retrieve()
@@ -142,13 +124,14 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Recommendation> getRecommendations(int productId) {
 
-    String url = recommendationServiceUrl  + "/recommendation?productId="+ productId;
+    String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
 
     LOG.debug("Will call the getRecommendations API on URL: {}", url);
 
     // Return an empty result if something goes wrong to make it possible for the composite service
     // to return partial responses
-    return webClient
+    return webClientFactory
+        .getWebClient()
         .get()
         .uri(url)
         .retrieve()
@@ -178,7 +161,8 @@ public class ProductCompositeIntegration
     String url = reviewServiceUrl + "/review?productId=" + productId;
 
     LOG.debug("Will call getReviews API on URL: {}", url);
-    return webClient
+    return webClientFactory
+        .getWebClient()
         .get()
         .uri(url)
         .retrieve()
@@ -247,7 +231,8 @@ public class ProductCompositeIntegration
   private Mono<Health> getHealth(String url) {
     url += "/actuator/health";
     LOG.debug("Will call the Health API on URL: {}", url);
-    return webClient
+    return webClientFactory
+        .getWebClient()
         .get()
         .uri(url)
         .retrieve()

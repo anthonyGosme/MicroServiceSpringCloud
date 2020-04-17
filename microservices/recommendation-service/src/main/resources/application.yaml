@@ -1,5 +1,16 @@
 ---
-spring.application.name: application-service
+
+spring.application.name: recommendation
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    initialInstanceInfoReplicationIntervalSeconds: 5
+    registryFetchIntervalSeconds: 5
+  instance:
+    leaseRenewalIntervalInSeconds: 5
+    leaseExpirationDurationInSeconds: 5
+
 server.port: 7002
 
 spring:
@@ -58,5 +69,5 @@ logging:
     com.agosme: DEBUG
 
 spring.rabbitmq.host: rabbitmq
-
+eureka.client.serviceUrl.defaultZone: http://eureka:8761/eureka/
 spring.cloud.stream.kafka.binder.brokers: kafka

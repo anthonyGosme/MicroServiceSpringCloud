@@ -2,12 +2,12 @@ package com.agosme.microservices.composite.service;
 
 import org.springframework.web.reactive.function.client.WebClient;
 
-public class WebClientHelper {
+public class WebClientFactory {
 
   private WebClient webClient;
   private WebClient.Builder webClientBuilder;
 
-  public WebClientHelper(WebClient.Builder webClientBuilder) {
+  public WebClientFactory(WebClient.Builder webClientBuilder) {
     this.webClientBuilder = webClientBuilder;
   }
 

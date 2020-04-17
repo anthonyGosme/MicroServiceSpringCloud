@@ -96,7 +96,7 @@ function waitForMessageProcessing() {
     until testCompositeCreated
     do
         n=$((n + 1))
-        if [[ $n == 5 ]]
+        if [[ $n == 100 ]]
         then
             echo " Give up"
             exit 1
