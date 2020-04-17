@@ -122,3 +122,8 @@ services:
     mem_limit: 350m
     ports:
       - "8080:8080"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8080/actuator/health}"
+      interval: 30s
+      timeout: 10s
+      retries: 10

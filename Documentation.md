@@ -144,9 +144,22 @@ http://localhost:15672/#/queues guest gest
 docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --zookeeper zookeeper --list
 docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topics.sh --describe --zookeeper zookeeper --topic products
 
-#eureka
+#eureka service discovery
 
 http://localhost:8761/
 http://localhost:8761/eureka/apps
 http://localhost:8761/actuator
+
 http://localhost:8761/actuator/health
+
+
+# sprinh gateway : edge server
+docker-compose ps 
+http://localhost:8080/actuator/gateway/routes
+docker-compose logs -f  --tail==0 gateway
+http://localhost:8080/product-composite/2
+http://localhost:8080/eureka/api/apps
+http://localhost:8080/eureka/web
+curl http://localhost:8080/headerrouting -H "Host:i.feel.lucky:8080"
+curl http://localhost:8080/headerrouting -H "Host:im.a.teapot:8080"
+http://localhost:8080/headerrouting

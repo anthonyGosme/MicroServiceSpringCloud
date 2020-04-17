@@ -198,9 +198,7 @@ then
 fi
 
 waitForService curl http://$HOST:$PORT/actuator/health
-echo  "a"
 setupTestdata
-echo  "b"
 waitForMessageProcessing
 
 
