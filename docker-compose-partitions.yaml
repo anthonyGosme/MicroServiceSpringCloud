@@ -176,15 +176,33 @@ services:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
       timeout: 5s
+
   eureka:
     build: spring-cloud/eureka-server
     mem_limit: 350m
     ports:
       - "8761:8761"
+      -
   gateway:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     build: spring-cloud/gateway
     mem_limit: 350m
     ports:
-      - "8080:8080"
+      - "8443:8443"
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8080/actuator/health}"
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  auth-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/auth-server
+    mem_limit: 350m
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8080/actuator/health}"
+      interval: 30s
+      timeout: 10s
+      retries: 10

@@ -1,6 +1,19 @@
 # init gradle project
 
 
+
+spring init \
+--boot-version=2.2.5.RELEASE \
+--build=gradle \
+--java-version=11 \
+--packaging=jar \
+--name= \
+--package-name=com.agosme.microservices.cloud.auth-server \
+--groupId=com.agosme.microservices.cloud.auth-server \
+--dependencies=actuator \
+--version=1.0.0-SNAPSHOT \
+auth-server
+
 spring init \
 --boot-version=2.2.5.RELEASE \
 --build=gradle \
@@ -146,14 +159,14 @@ docker-compose -f docker-compose-kafka.yaml exec kafka /opt/kafka/bin/kafka-topi
 
 #eureka service discovery
 
-http://localhost:8761/
+http://localhost:8761/  -> eureka IHM
 http://localhost:8761/eureka/apps
 http://localhost:8761/actuator
 
 http://localhost:8761/actuator/health
 
 
-# sprinh gateway : edge server
+# spring gateway : edge server
 docker-compose ps 
 http://localhost:8080/actuator/gateway/routes
 docker-compose logs -f  --tail==0 gateway

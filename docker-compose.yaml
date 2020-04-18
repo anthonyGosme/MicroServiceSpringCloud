@@ -1,6 +1,7 @@
 version: '2.1'
 
 services:
+
   mysql:
     image: mysql:5.7
     mem_limit: 350m
@@ -16,6 +17,7 @@ services:
       interval: 20s
       timeout: 10s
       retries: 10
+
   review:
     build: microservices/review-service
     mem_limit: 350m
@@ -32,6 +34,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   product:
     build: microservices/product-service
     mem_limit: 350m
@@ -50,6 +53,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   recommendation:
     build: microservices/recommendation-service
     mem_limit: 350m
@@ -68,6 +72,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   product-composite:
     build: microservices/product-composite-service
     mem_limit: 350m
@@ -83,6 +88,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   mongodb:
     image: mongo:3.6.9
     mem_limit: 350m
@@ -105,6 +111,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   eureka:
     build: spring-cloud/eureka-server
     mem_limit: 350m
@@ -115,15 +122,30 @@ services:
       interval: 30s
       timeout: 10s
       retries: 10
+
   gateway:
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     build: spring-cloud/gateway
     mem_limit: 350m
     ports:
-      - "8080:8080"
+      - "8443:8443"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8080/actuator/health}"
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  auth-server:
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    build: spring-cloud/auth-server
+    mem_limit: 350m
+    ports:
+      - 9998:8080
+      - 9999:9999
+    healthcheck:
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:9999/actuator/health}"
       interval: 30s
       timeout: 10s
       retries: 10
