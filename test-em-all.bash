@@ -186,6 +186,7 @@ if [[ $@ == *"start"* ]]
 then
     echo "Restarting the test environment..."
     echo "$ docker-compose down --remove-orphans"
+    docker volume prune -f
     docker-compose down --remove-orphans
     echo "$ docker-compose up -d"
     docker-compose up -d
@@ -249,11 +250,11 @@ assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS
 
 echo "End, all tests OK:" `date`
 
-if [[ $@ == *"stop"* ]]
-then
-    echo "Stopping the test environment..."
-    echo "$ docker-compose down --remove-orphans"
-    docker-compose down --remove-orphans
-fi
+#if [[ $@ == *"stop"* ]]
+#then
+#    echo "Stopping the test environment..."
+#    echo "$ docker-compose down --remove-orphans"
+#    docker-compose down --remove-orphans
+#fi
 
 echo "End:" `date`

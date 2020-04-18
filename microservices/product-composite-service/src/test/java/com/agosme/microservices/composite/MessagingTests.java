@@ -44,7 +44,7 @@ public class MessagingTests {
   private static final int PRODUCT_ID_NOT_FOUND = 2;
   private static final int PRODUCT_ID_INVALID = 3;
 
-  @Autowired private WebTestClient client;
+  @Autowired private WebTestClient webTestClient;
 
   @Autowired private MessageSources channels;
 
@@ -176,7 +176,7 @@ public class MessagingTests {
   }
 
   private void postAndVerifyProduct(ProductAggregate compositeProduct, HttpStatus expectedStatus) {
-    client
+    webTestClient
         .post()
         .uri("/product-composite")
         .body(just(compositeProduct), ProductAggregate.class)
@@ -186,7 +186,7 @@ public class MessagingTests {
   }
 
   private void deleteAndVerifyProduct(int productId, HttpStatus expectedStatus) {
-    client
+    webTestClient
         .delete()
         .uri("/product-composite/" + productId)
         .exchange()

@@ -14,7 +14,7 @@ services:
       - MYSQL_PASSWORD=pwd
     healthcheck:
       test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
-      interval: 20s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -31,7 +31,7 @@ services:
     #      - "17003:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -50,7 +50,7 @@ services:
       - "17001:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -69,7 +69,7 @@ services:
       - "7120-7130:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -78,6 +78,7 @@ services:
     mem_limit: 350m
     ports:
       - "8001:8001"
+      - "8180:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
@@ -85,7 +86,7 @@ services:
         condition: service_healthy
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -97,7 +98,7 @@ services:
     command: mongod --smallfiles
     healthcheck:
       test: "mongo --eval 'db.stats().ok'"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
   rabbitmq:
@@ -108,7 +109,7 @@ services:
       - 15672:15672
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -119,7 +120,7 @@ services:
       - "8761:8761"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8761/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -131,8 +132,8 @@ services:
     ports:
       - "8443:8443"
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8080/actuator/health}"
-      interval: 30s
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl https://localhost:8443/actuator/health -k}"
+      interval: 10s
       timeout: 10s
       retries: 10
 
@@ -146,6 +147,6 @@ services:
       - 9999:9999
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:9999/actuator/health}"
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 10

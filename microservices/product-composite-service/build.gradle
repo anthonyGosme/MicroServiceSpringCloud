@@ -41,7 +41,6 @@ dependencies {
 
     implementation('org.springframework.boot:spring-boot-starter-actuator')
     implementation('org.springframework.boot:spring-boot-starter-webflux')
-
     implementation("io.springfox:springfox-swagger2:${springfoxVersion}-39")
     implementation("io.springfox:springfox-swagger-ui:${springfoxVersion}-39")
     implementation("io.springfox:springfox-swagger-common:${springfoxVersion}-39")
@@ -51,10 +50,10 @@ dependencies {
     implementation("io.springfox:springfox-schema:${springfoxVersion}-39")
     implementation("io.springfox:springfox-spring-web:${springfoxVersion}-38")
 
-
     testImplementation('io.projectreactor:reactor-test')
 
     testImplementation('org.springframework.boot:spring-boot-starter-test')
+
 
     implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
     implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')

@@ -1,5 +1,13 @@
 # init gradle project
+## build 
+./gradlew build
+./gradlew test
+./gradlew  :microservices:product-service:test
+./gradlew  :microservices:product-service:clean  :microservices:product-service:build
+docker-compose kill product-service & docker-compose up product-service
 
+
+#spring init
 
 
 spring init \
@@ -75,11 +83,7 @@ spring init \
 --version=1.0.0-SNAPSHOT \
 recommendation-service
 
-## build 
-./gradlew build
-./gradlew test
-./gradlew  :microservices:product-service:test
-./gradlew  :microservices:product-composite:build
+
 
 ## test
 curl http://localhost:7000/product-composite/13 -i
@@ -125,7 +129,7 @@ docker-compose exec --index=2 review cat /etc/hosts
 docker-compose up -d --scale product=0
 docker-compose up -d --scale product=1
 curl localhost:8080/product-composite/2 -s |  jq -r .serviceAddresses.rev
-
+docker-compose up -d --scale gateway=0 --scale gateway=1
 # continous integration
 date && ./gradlew clean build && docker-compose build && ./test-em-all.bash start stop && date
 
