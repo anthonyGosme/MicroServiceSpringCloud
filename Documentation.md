@@ -180,3 +180,6 @@ http://localhost:8080/headerrouting
 #Https
 create a sef signed cetificate pass: password
 keytool -genkeypair -alias localhost -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore edge.p12 -validity 3650
+
+curl -H "accept:application/json" https://u:p@localhost:8443/eureka/api/apps -kv | jq 
+browser https://localhost:8443/eureka/web/
