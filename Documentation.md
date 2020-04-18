@@ -176,3 +176,7 @@ http://localhost:8080/eureka/web
 curl http://localhost:8080/headerrouting -H "Host:i.feel.lucky:8080"
 curl http://localhost:8080/headerrouting -H "Host:im.a.teapot:8080"
 http://localhost:8080/headerrouting
+
+#Https
+create a sef signed cetificate pass: password
+keytool -genkeypair -alias localhost -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore edge.p12 -validity 3650
