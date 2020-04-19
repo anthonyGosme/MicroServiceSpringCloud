@@ -36,11 +36,10 @@ public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
   private final ObjectMapper mapper;
-
-  WebClientFactory webClientFactory;
   private final String productServiceUrl = "http://product";
   private final String recommendationServiceUrl = "http://recommendation";
   private final String reviewServiceUrl = "http://review";
+  WebClientFactory webClientFactory;
   private MessageSources messageSources;
 
   @Autowired
@@ -170,7 +169,7 @@ public class ProductCompositeIntegration
         .log()
         .onErrorResume(error -> empty());
   }
-
+/*
   protected RuntimeException handleHttpClientException(HttpClientErrorException ex) {
     switch (ex.getStatusCode()) {
       case NOT_FOUND:
@@ -185,7 +184,7 @@ public class ProductCompositeIntegration
         return ex;
     }
   }
-
+*/
   private Throwable handleException(Throwable ex) {
 
     if (!(ex instanceof WebClientResponseException)) {

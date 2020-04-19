@@ -43,13 +43,14 @@ public class PersistenceTests {
     RecommendationEntity foundEntity = repository.findById(newEntity.getId()).block();
     assertEqualsRecommendation(newEntity, foundEntity);
 
-    assertEquals(2, (long)repository.count().block());
+    assertEquals(2, (long) repository.count().block());
   }
 
   @Test
   public void update() {
     savedEntity.setAuthor("a2");
-    repository.save(savedEntity).block();;
+    repository.save(savedEntity).block();
+    ;
 
     RecommendationEntity foundEntity = repository.findById(savedEntity.getId()).block();
     assertEquals(1, (long) foundEntity.getVersion());
@@ -58,13 +59,16 @@ public class PersistenceTests {
 
   @Test
   public void delete() {
-    repository.delete(savedEntity).block();;
+    repository.delete(savedEntity).block();
+    ;
     assertFalse(repository.existsById(savedEntity.getId()).block());
   }
 
   @Test
   public void getByProductId() {
-    List<RecommendationEntity> entityList = repository.findByProductId(savedEntity.getProductId()).collectList().block();;
+    List<RecommendationEntity> entityList =
+        repository.findByProductId(savedEntity.getProductId()).collectList().block();
+    ;
 
     assertThat(entityList, hasSize(1));
     assertEqualsRecommendation(savedEntity, entityList.get(0));
@@ -73,7 +77,8 @@ public class PersistenceTests {
   @Test(expected = DuplicateKeyException.class)
   public void duplicateError() {
     RecommendationEntity entity = new RecommendationEntity(1, 2, "a", 3, "c");
-    repository.save(entity).block();;
+    repository.save(entity).block();
+    ;
   }
 
   @Test

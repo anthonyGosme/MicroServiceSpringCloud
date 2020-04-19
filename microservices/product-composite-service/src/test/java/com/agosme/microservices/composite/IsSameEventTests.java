@@ -9,7 +9,6 @@ import org.junit.Test;
 import static com.agosme.api.event.Event.Type.CREATE;
 import static com.agosme.api.event.Event.Type.DELETE;
 import static com.agosme.microservices.composite.IsSameEvent.sameEventExceptCreatedAt;
-
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;

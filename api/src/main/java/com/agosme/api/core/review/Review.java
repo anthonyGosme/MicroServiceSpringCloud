@@ -1,10 +1,13 @@
 package com.agosme.api.core.review;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
-//@RequiredArgsConstructor
+// @RequiredArgsConstructor
 
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
@@ -16,5 +19,3 @@ public class Review {
   private String content;
   private String serviceAddress;
 }
-
-

@@ -17,25 +17,20 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class EurekaServerApplicationTests {
 
-  @Test
-  public void contextLoads() {}
-
-
   @Value("${app.eureka-username}")
-
   private String username;
-
   @Value("${app.eureka-password}")
   private String password;
+  // TODO; Replace with WebTestClient
+  @Autowired private TestRestTemplate testRestTemplate;
+
+  @Test
+  public void contextLoads() {}
 
   @Autowired
   public void setTestRestTemplate(TestRestTemplate testRestTemplate) {
     this.testRestTemplate = testRestTemplate.withBasicAuth(username, password);
   }
-
-
-  // TODO; Replace with WebTestClient
-  @Autowired private TestRestTemplate testRestTemplate;
 
   @Test
   public void catalogLoads() {

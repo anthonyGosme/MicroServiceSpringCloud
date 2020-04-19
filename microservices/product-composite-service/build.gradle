@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        springBootVersion = '2.2.5.RELEASE'
-       // springBootVersion = '2.1.2.RELEASE'
+        springBootVersion = '2.2.6.RELEASE'
+        // springBootVersion = '2.1.2.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -24,7 +24,7 @@ ext {
 //	springfoxVersion = "3.0.0-SNAPSHOT"
     springfoxVersion = "3.0.0-20190808.104142"
     springCloudVersion = "Hoxton.RELEASE"
-   // springCloudVersion = "Greenwich.RELEASE"
+    // springCloudVersion = "Greenwich.RELEASE"
 }
 
 repositories {

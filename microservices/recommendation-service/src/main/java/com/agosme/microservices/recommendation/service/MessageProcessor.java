@@ -1,6 +1,5 @@
 package com.agosme.microservices.recommendation.service;
 
-
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.recommendation.RecommendationService;
 import com.agosme.api.event.Event;
@@ -11,43 +10,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
+
 @EnableBinding(Sink.class)
 public class MessageProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(MessageProcessor.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MessageProcessor.class);
 
-    private final RecommendationService recommendationService;
+  private final RecommendationService recommendationService;
 
-    @Autowired
-    public MessageProcessor(RecommendationService recommendationService) {
-        this.recommendationService = recommendationService;
+  @Autowired
+  public MessageProcessor(RecommendationService recommendationService) {
+    this.recommendationService = recommendationService;
+  }
+
+  @StreamListener(target = Sink.INPUT)
+  public void process(Event<Integer, Recommendation> event) {
+
+    LOG.info("Process message created at {}...", event.getEventCreatedAt());
+
+    switch (event.getEventType()) {
+      case CREATE:
+        Recommendation recommendation = event.getData();
+        LOG.info(
+            "Create recommendation with ID: {}/{}",
+            recommendation.getProductId(),
+            recommendation.getRecommendationId());
+        recommendationService.createRecommendation(recommendation);
+        break;
+
+      case DELETE:
+        int productId = event.getKey();
+        LOG.info("Delete recommendations with ProductID: {}", productId);
+        recommendationService.deleteRecommendations(productId);
+        break;
+
+      default:
+        String errorMessage =
+            "Incorrect event type: " + event.getEventType() + ", expected a CREATE or DELETE event";
+        LOG.warn(errorMessage);
+        throw new EventProcessingException(errorMessage);
     }
 
-    @StreamListener(target = Sink.INPUT)
-    public void process(Event<Integer, Recommendation> event) {
-
-        LOG.info("Process message created at {}...", event.getEventCreatedAt());
-
-        switch (event.getEventType()) {
-
-            case CREATE:
-                Recommendation recommendation = event.getData();
-                LOG.info("Create recommendation with ID: {}/{}", recommendation.getProductId(), recommendation.getRecommendationId());
-                recommendationService.createRecommendation(recommendation);
-                break;
-
-            case DELETE:
-                int productId = event.getKey();
-                LOG.info("Delete recommendations with ProductID: {}", productId);
-                recommendationService.deleteRecommendations(productId);
-                break;
-
-            default:
-                String errorMessage = "Incorrect event type: " + event.getEventType() + ", expected a CREATE or DELETE event";
-                LOG.warn(errorMessage);
-                throw new EventProcessingException(errorMessage);
-        }
-
-        LOG.info("Message processing done!");
-    }
+    LOG.info("Message processing done!");
+  }
 }

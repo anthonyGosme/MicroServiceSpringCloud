@@ -22,35 +22,32 @@ function assertCurl() {
 
   local expectedHttpCode=$1
   local curlCmd="$2 -i"
-echo curl
-   result=$(eval $curlCmd)
-   status=$(echo "$result"|  head -n 2 | tail -n 1)
-   httpCode=$(echo "$result"| head -n 1 | awk  '{print  $2}')
+  echo curl
+  result=$(eval $curlCmd)
+  status=$(echo "$result" | head -n 2 | tail -n 1)
+  httpCode=$(echo "$result" | head -n 1 | awk '{print  $2}')
 
+  RESPONSE=$(echo "$result" | tail -n 1)
 
-RESPONSE=$(echo "$result"| tail -n 1 )
+  # RESPONSE='' && (( ${#result} > 3 )) && RESPONSE="${result%???}"
+  #echo "==$result"
+  #echo "--$status"
+  #echo "++$httpCode"
+  #echo "**$RESPONSE"
 
- # RESPONSE='' && (( ${#result} > 3 )) && RESPONSE="${result%???}"
-#echo "==$result"
-#echo "--$status"
-#echo "++$httpCode"
-#echo "**$RESPONSE"
-
-  if [ "$httpCode" = "$expectedHttpCode" ]
-  then
-    if [ "$httpCode" = "200" ]
-    then
+  if [ "$httpCode" = "$expectedHttpCode" ]; then
+    if [ "$httpCode" = "200" ]; then
       printf "${GREEN}OK: $httpCode${NC}\n"
     else
       printf "${GREEN}OK: $httpCode${NC}\n $status => $RESPONSE\n"
     fi
     return 0
   else
-      printf "${RED}KO: got $httpCode and expected $expectedHttpCode${NC}\n"
-      echo  "- Failing command: $curlCmd"
-      echo  "- response status:  $status"
-      echo  "- Response Body: $RESPONSE"
-      return 1
+    printf "${RED}KO: got $httpCode and expected $expectedHttpCode${NC}\n"
+    echo "- Failing command: $curlCmd"
+    echo "- response status:  $status"
+    echo "- Response Body: $RESPONSE"
+    return 1
   fi
 }
 
@@ -59,8 +56,7 @@ function assertEqual() {
   local expected=$1
   local actual=$2
 
-  if [ "$actual" = "$expected" ]
-  then
+  if [ "$actual" = "$expected" ]; then
     printf "${GREEN} OK ${NC} (actual value: $actual)\n"
   else
     printf "${RED}Test FAILED, EXPECTED VALUE: $expected, ACTUAL VALUE: $actual, WILL ABORT${NC}\n"
@@ -69,114 +65,102 @@ function assertEqual() {
 }
 
 function testUrl() {
-    url=$@
-    if $url -ks -f -o /dev/null
-    then
-          return 0
-    else
-          return 1
-    fi;
+  url=$@
+  if $url -ks -f -o /dev/null; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 function testCompositeCreated() {
 
-    echo "# Expect that the Product Composite for productId $PROD_ID_REVS_RECS has been created with three recommendations and three reviews"
-    if ! assertCurl 200 "curl $AUTH -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
+  echo "# Expect that the Product Composite for productId $PROD_ID_REVS_RECS has been created with three recommendations and three reviews"
+  if ! assertCurl 200 "curl $AUTH -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"; then
+    echo -n "FAIL"
+    return 1
+  fi
 
-    then
-        echo -n "FAIL"
-        return 1
-    fi
+  set +e
+  assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId)
+  if [ "$?" -eq "1" ]; then return 1; fi
 
-    set +e
-    assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId)
-    if [ "$?" -eq "1" ] ; then return 1; fi
+  assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
+  if [ "$?" -eq "1" ]; then return 1; fi
 
-    assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
-    if [ "$?" -eq "1" ] ; then return 1; fi
+  assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
+  if [ "$?" -eq "1" ]; then return 1; fi
 
-    assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
-    if [ "$?" -eq "1" ] ; then return 1; fi
-
-    set -e
+  set -e
 }
 
 function waitForMessageProcessing() {
-    echo "Wait for messages to be processed... "
+  echo "Wait for messages to be processed... "
 
-    # Give background processing some time to complete...
-    sleep 1
+  # Give background processing some time to complete...
+  sleep 1
 
-    n=0
-    until testCompositeCreated
-    do
-        n=$((n + 1))
-        if [[ $n == 100 ]]
-        then
-            echo " Give up"
-            exit 1
-        else
-            sleep 6
-            echo -n ", retry #$n "
-        fi
-    done
-    echo "All messages are now processed!"
+  n=0
+  until testCompositeCreated; do
+    n=$((n + 1))
+    if [[ $n == 100 ]]; then
+      echo " Give up"
+      exit 1
+    else
+      sleep 6
+      echo -n ", retry #$n "
+    fi
+  done
+  echo "All messages are now processed!"
 }
 
-
 function waitForService() {
-    url=$@
-    echo -n "Wait for: $url... "
-    n=0
-    until testUrl $url
-    do
-        n=$((n + 1))
-        if [[ $n == 10 ]]
-        then
-            echo " Give up"
-            echo "Stopping the test environment..."
-            echo "$ docker-compose down --remove-orphans"
-            docker-compose down --remove-orphans
-            exit 1
-        else
-            sleep 6
-            echo -n ", retry #$n "
-        fi
-    done
+  url=$@
+  echo -n "Wait for: $url... "
+  n=0
+  until testUrl $url; do
+    n=$((n + 1))
+    if [[ $n == 10 ]]; then
+      echo " Give up"
+      echo "Stopping the test environment..."
+      echo "$ docker-compose down --remove-orphans"
+      docker-compose down --remove-orphans
+      exit 1
+    else
+      sleep 6
+      echo -n ", retry #$n "
+    fi
+  done
 }
 
 function recreateComposite() {
-    local productId=$1
-    local composite=$2
+  local productId=$1
+  local composite=$2
 
-    assertCurl 200 "curl $AUTH -X DELETE -k https://$HOST:$PORT/product-composite/${productId} -s"
-    curl -X POST -k https://$HOST:$PORT/product-composite -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" --data "$composite"
+  assertCurl 200 "curl $AUTH -X DELETE -k https://$HOST:$PORT/product-composite/${productId} -s"
+  curl -X POST -k https://$HOST:$PORT/product-composite -H "Content-Type: application/json" -H "Authorization: Bearer $ACCESS_TOKEN" --data "$composite"
 }
 
 function setupTestdata() {
 
-    body="{\"productId\":$PROD_ID_NO_RECS"
-    body+=\
-',"name":"product name A","weight":100, "reviews":[
+  body="{\"productId\":$PROD_ID_NO_RECS"
+  body+=',"name":"product name A","weight":100, "reviews":[
     {"reviewId":1,"author":"author 1","subject":"subject 1","content":"content 1"},
     {"reviewId":2,"author":"author 2","subject":"subject 2","content":"content 2"},
     {"reviewId":3,"author":"author 3","subject":"subject 3","content":"content 3"}
 ]}'
-    recreateComposite "$PROD_ID_NO_RECS" "$body"
+  recreateComposite "$PROD_ID_NO_RECS" "$body"
 
-    body="{\"productId\":$PROD_ID_NO_REVS"
-    body+=\
-',"name":"product name B","weight":200, "recommendations":[
+  body="{\"productId\":$PROD_ID_NO_REVS"
+  body+=',"name":"product name B","weight":200, "recommendations":[
     {"recommendationId":1,"author":"author 1","rate":1,"content":"content 1"},
     {"recommendationId":2,"author":"author 2","rate":2,"content":"content 2"},
     {"recommendationId":3,"author":"author 3","rate":3,"content":"content 3"}
 ]}'
-    recreateComposite "$PROD_ID_NO_REVS" "$body"
+  recreateComposite "$PROD_ID_NO_REVS" "$body"
 
-
-    body="{\"productId\":$PROD_ID_REVS_RECS"
-    body+=\
-',"name":"product name C","weight":300, "recommendations":[
+  body="{\"productId\":$PROD_ID_REVS_RECS"
+  body+=',"name":"product name C","weight":300, "recommendations":[
         {"recommendationId":1,"author":"author 1","rate":1,"content":"content 1"},
         {"recommendationId":2,"author":"author 2","rate":2,"content":"content 2"},
         {"recommendationId":3,"author":"author 3","rate":3,"content":"content 3"}
@@ -185,32 +169,30 @@ function setupTestdata() {
         {"reviewId":2,"author":"author 2","subject":"subject 2","content":"content 2"},
         {"reviewId":3,"author":"author 3","subject":"subject 3","content":"content 3"}
     ]}'
-    recreateComposite 1 "$body"
+  recreateComposite 1 "$body"
 
 }
 
 set -e
 
-echo "Start Tests:" `date`
+echo "Start Tests:" $(date)
 
 echo "HOST=${HOST}"
 echo "PORT=${PORT}"
 
-if [[ $@ == *"start"* ]]
-then
-    echo "Restarting the test environment..."
-    echo "$ docker-compose down --remove-orphans"
-    docker volume prune -f
-    docker-compose down --remove-orphans
-    echo "$ docker-compose up -d"
-    docker-compose up -d
+if [[ $@ == *"start"* ]]; then
+  echo "Restarting the test environment..."
+  echo "$ docker-compose down --remove-orphans"
+  docker volume prune -f
+  docker-compose down --remove-orphans
+  echo "$ docker-compose up -d"
+  docker-compose up -d
 fi
 
-if [[ $@ == *"skiptest"* ]]
-then
-    echo "We are done starting"
-    docker ps -a
-    exit
+if [[ $@ == *"skiptest"* ]]; then
+  echo "We are done starting"
+  docker ps -a
+  exit
 fi
 
 waitForService curl -k https://$HOST:$PORT/actuator/health
@@ -219,7 +201,6 @@ AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
 setupTestdata
 waitForMessageProcessing
-
 
 echo -e "\n# Verify that a normal request works, expect three recommendations and three reviews"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
@@ -260,9 +241,7 @@ READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -s"
 assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -X DELETE -s"
 
-
-
-printf "${GREEN}\nEnd, all tests OK:" `date`
+printf "${GREEN}\nEnd, all tests OK:" $(date)
 
 #if [[ $@ == *"stop"* ]]
 #then
@@ -271,4 +250,4 @@ printf "${GREEN}\nEnd, all tests OK:" `date`
 #    docker-compose down --remove-orphans
 #fi
 
-echo "End:" `date`
+echo "End:" $(date)

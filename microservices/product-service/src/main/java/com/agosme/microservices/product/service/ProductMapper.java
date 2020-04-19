@@ -11,14 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface ProductMapper {
 
-    @Mappings({
-            @Mapping(target = "serviceAddress", ignore = true)
-    })
-    Product entityToApi(ProductEntity entity);
+  @Mappings({@Mapping(target = "serviceAddress", ignore = true)})
+  Product entityToApi(ProductEntity entity);
 
-    @Mappings({
-            @Mapping(target = "id", ignore = true),
-            @Mapping(target = "version", ignore = true)
-    })
-    ProductEntity apiToEntity(Product api);
+  @Mappings({@Mapping(target = "id", ignore = true), @Mapping(target = "version", ignore = true)})
+  ProductEntity apiToEntity(Product api);
 }

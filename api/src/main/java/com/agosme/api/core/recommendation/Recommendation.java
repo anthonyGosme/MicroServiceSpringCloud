@@ -16,6 +16,4 @@ public class Recommendation {
   private int rate;
   private String content;
   private String serviceAddress;
-
-
 }

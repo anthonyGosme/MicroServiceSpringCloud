@@ -42,7 +42,6 @@ public class ProductCompositeServiceApplicationTests {
 
   @Autowired private WebTestClient client;
 
-
   @MockBean private ProductCompositeIntegration compositeIntegration;
 
   @Before

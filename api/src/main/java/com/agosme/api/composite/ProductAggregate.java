@@ -1,14 +1,10 @@
 package com.agosme.api.composite;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-
 public class ProductAggregate {
   private final int productId;
   private final String name;
@@ -16,7 +12,7 @@ public class ProductAggregate {
   private final List<RecommendationSummary> recommendations;
   private final List<ReviewSummary> reviews;
 
-//  @JsonIgnore
+  //  @JsonIgnore
   private ServiceAddresses serviceAddresses;
 
   public ProductAggregate() {

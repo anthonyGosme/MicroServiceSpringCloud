@@ -34,23 +34,24 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.cloud.stream.test.matcher.MessageQueueMatcher.receivesPayloadThat;
 import static org.springframework.http.HttpStatus.OK;
 import static reactor.core.publisher.Mono.just;
+
 @RunWith(SpringRunner.class)
 @AutoConfigureWebTestClient
 @SpringBootTest(
-        webEnvironment=RANDOM_PORT,
-        classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class },
-        properties = {"spring.main.allow-bean-definition-overriding=true","eureka.client.enabled=false"})
+    webEnvironment = RANDOM_PORT,
+    classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class},
+    properties = {
+      "spring.main.allow-bean-definition-overriding=true",
+      "eureka.client.enabled=false"
+    })
 public class MessagingTests {
-
-  @Autowired private WebTestClient webTestClient;
-
-  @Autowired private MessageSources channels;
-
-  @Autowired private MessageCollector collector;
 
   BlockingQueue<Message<?>> queueProducts = null;
   BlockingQueue<Message<?>> queueRecommendations = null;
   BlockingQueue<Message<?>> queueReviews = null;
+  @Autowired private WebTestClient webTestClient;
+  @Autowired private MessageSources channels;
+  @Autowired private MessageCollector collector;
 
   @Before
   public void setUp() {

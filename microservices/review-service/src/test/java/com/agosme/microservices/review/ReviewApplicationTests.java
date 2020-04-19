@@ -26,12 +26,11 @@ import static org.junit.Assert.fail;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static reactor.core.publisher.Mono.just;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        webEnvironment = RANDOM_PORT,
-        properties = {"spring.datasource.url=jdbc:h2:mem:review-db", "eureka.client.enabled=false"})
+    webEnvironment = RANDOM_PORT,
+    properties = {"spring.datasource.url=jdbc:h2:mem:review-db", "eureka.client.enabled=false"})
 @AutoConfigureWebTestClient
 public class ReviewApplicationTests {
 
@@ -60,7 +59,6 @@ public class ReviewApplicationTests {
     sendCreateReviewEvent(productId, 2);
     sendCreateReviewEvent(productId, 3);
 
-
     assertEquals(3, repository.findByProductId(productId).size());
 
     getAndVerifyReviewsByProductId(productId, OK)
@@ -75,7 +73,6 @@ public class ReviewApplicationTests {
   @Test
   public void duplicateError() {
 
-
     int productId = 1;
     int reviewId = 1;
 
@@ -89,8 +86,8 @@ public class ReviewApplicationTests {
       sendCreateReviewEvent(productId, reviewId);
       fail("Expected a MessagingException here!");
     } catch (MessagingException me) {
-      if (me.getCause() instanceof InvalidInputException)	{
-        InvalidInputException iie = (InvalidInputException)me.getCause();
+      if (me.getCause() instanceof InvalidInputException) {
+        InvalidInputException iie = (InvalidInputException) me.getCause();
         assertEquals("Duplicate key, Product Id: 1, Review Id:1", iie.getMessage());
       } else {
         fail("Expected a InvalidInputException as the root cause!");
@@ -172,7 +169,14 @@ public class ReviewApplicationTests {
   }
 
   private void sendCreateReviewEvent(int productId, int reviewId) {
-    Review review = new Review(productId, reviewId, "Author " + reviewId, "Subject " + reviewId, "Content " + reviewId, "SA");
+    Review review =
+        new Review(
+            productId,
+            reviewId,
+            "Author " + reviewId,
+            "Subject " + reviewId,
+            "Content " + reviewId,
+            "SA");
     Event<Integer, Product> event = new Event(CREATE, productId, review);
     input.send(new GenericMessage<>(event));
   }

@@ -15,12 +15,9 @@ import java.util.LinkedHashMap;
 public class HealthCheckConfiguration {
 
   private static final Logger LOG = LoggerFactory.getLogger(HealthCheckConfiguration.class);
-
-  private HealthAggregator healthAggregator;
-
   private final WebClient.Builder webClientBuilder;
-
-  private WebClient webClient;
+  private HealthAggregator healthAggregator;
+  public WebClient webClient;
 
   @Autowired
   public HealthCheckConfiguration(
