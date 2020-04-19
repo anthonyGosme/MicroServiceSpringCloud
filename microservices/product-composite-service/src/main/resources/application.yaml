@@ -4,6 +4,7 @@ app:
   eureka-password: p
   eureka-server: localhost
   auth-server: localhost
+
 eureka:
   client:
     serviceUrl:
@@ -116,7 +117,7 @@ spring.rabbitmq:
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://anthonygosme.eu.auth0.com/
 ---
 spring.profiles: docker
 server.port: 8080

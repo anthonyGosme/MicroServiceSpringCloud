@@ -8,9 +8,7 @@ server.ssl:
   key-store-password: password
   key-alias: localhost
 
-
-spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
-
+spring.security.oauth2.resourceserver.jwt.issuer-uri: https://anthonygosme.eu.auth0.com
 app:
   eureka-username: u
   eureka-password: p
