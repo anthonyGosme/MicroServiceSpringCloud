@@ -17,6 +17,7 @@ public interface ProductCompositeService {
    * '{"productId":123,"name":"product 123","weight":123}'
    *
    * @param body
+   * @return
    */
   @ApiOperation(
       value = "${api.product-composite.create-composite-product.description}",
@@ -33,7 +34,7 @@ public interface ProductCompositeService {
                 "Unprocessable entity, input parameters caused the processing to fail. See response message for more information.")
       })
   @PostMapping(value = "/product-composite", consumes = "application/json")
-  void createCompositeProduct(@RequestBody ProductAggregate body);
+  Mono<Void> createCompositeProduct(@RequestBody ProductAggregate body);
 
   /**
    * Sample usage: curl $HOST:$PORT/product-composite/1
@@ -65,6 +66,7 @@ public interface ProductCompositeService {
    * <p>curl -X DELETE $HOST:$PORT/product-composite/1
    *
    * @param productId
+   * @return
    */
   @ApiOperation(
       value = "${api.product-composite.delete-composite-product.description}",
@@ -81,5 +83,5 @@ public interface ProductCompositeService {
                 "Unprocessable entity, input parameters caused the processing to fail. See response message for more information.")
       })
   @DeleteMapping(value = "/product-composite/{productId}")
-  void deleteCompositeProduct(@PathVariable int productId);
+  Mono<Void> deleteCompositeProduct(@PathVariable int productId);
 }

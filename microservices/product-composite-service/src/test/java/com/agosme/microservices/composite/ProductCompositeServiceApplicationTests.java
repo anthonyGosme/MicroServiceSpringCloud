@@ -27,27 +27,36 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
 @AutoConfigureWebTestClient
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment=RANDOM_PORT, properties = {"eureka.client.enabled=false"})
+@SpringBootTest(
+    webEnvironment = RANDOM_PORT,
+    classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class},
+    properties = {
+      "spring.main.allow-bean-definition-overriding=true",
+      "eureka.client.enabled=false"
+    })
 public class ProductCompositeServiceApplicationTests {
 
   private static final int PRODUCT_ID_OK = 1;
   private static final int PRODUCT_ID_NOT_FOUND = 2;
   private static final int PRODUCT_ID_INVALID = 3;
-  @Autowired private WebTestClient client;
-  @MockBean private ProductCompositeIntegration compositeIntegration;
 
-  public ProductCompositeServiceApplicationTests() {}
+  @Autowired private WebTestClient client;
+
+
+  @MockBean private ProductCompositeIntegration compositeIntegration;
 
   @Before
   public void setUp() {
 
     when(compositeIntegration.getProduct(PRODUCT_ID_OK))
         .thenReturn(Mono.just(new Product(PRODUCT_ID_OK, "name", 1, "mock-address")));
+
     when(compositeIntegration.getRecommendations(PRODUCT_ID_OK))
         .thenReturn(
             Flux.fromIterable(
                 singletonList(
                     new Recommendation(PRODUCT_ID_OK, 1, "author", 1, "content", "mock address"))));
+
     when(compositeIntegration.getReviews(PRODUCT_ID_OK))
         .thenReturn(
             Flux.fromIterable(
@@ -60,6 +69,9 @@ public class ProductCompositeServiceApplicationTests {
     when(compositeIntegration.getProduct(PRODUCT_ID_INVALID))
         .thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
   }
+
+  @Test
+  public void contextLoads() {}
 
   @Test
   public void getProductById() {

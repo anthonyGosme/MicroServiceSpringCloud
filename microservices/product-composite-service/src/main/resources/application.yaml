@@ -2,8 +2,8 @@ spring.application.name: product-composite
 app:
   eureka-username: u
   eureka-password: p
-# eureka-server: localhost
-#  auth-server: localhost
+  eureka-server: localhost
+  auth-server: localhost
 eureka:
   client:
     serviceUrl:
@@ -86,6 +86,7 @@ logging:
     root: INFO
     com.agosme: DEBUG
     org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
+
 spring.cloud.stream:
   defaultBinder: rabbit
   default.contentType: application/json
@@ -115,6 +116,7 @@ spring.rabbitmq:
 
 management.endpoint.health.show-details: "ALWAYS"
 management.endpoints.web.exposure.include: "*"
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
 ---
 spring.profiles: docker
 server.port: 8080

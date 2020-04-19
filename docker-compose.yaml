@@ -45,9 +45,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    ports:
-      - "7001:8080"
-      - "17001:8001"
+   # ports:
+   #   - "7001:8080"
+   #   - "17001:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -64,9 +64,9 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    ports:
-      - "7020-7030:8080"
-      - "7120-7130:8001"
+   # ports:
+   #   - "7020-7030:8080"
+   #   - "7120-7130:8001"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -77,8 +77,8 @@ services:
     build: microservices/product-composite-service
     mem_limit: 350m
     ports:
+      - "7000:8080"
       - "8001:8001"
-      - "8180:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:

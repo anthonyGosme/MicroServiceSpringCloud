@@ -14,7 +14,9 @@
 : ${PROD_ID_NOT_FOUND=14}
 : ${PROD_ID_NO_RECS=114}
 : ${PROD_ID_NO_REVS=214}
-
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
 function assertCurl() {
 
   local expectedHttpCode=$1
@@ -27,13 +29,13 @@ function assertCurl() {
   then
     if [ "$httpCode" = "200" ]
     then
-      echo "Test OK (HTTP Code: $httpCode)"
+      printf "${GREEN}OK: $httpCode${NC}\n"
     else
-      echo "Test OK (HTTP Code: $httpCode, $RESPONSE)"
+      printf "${GREEN}OK: $httpCode${NC} => $RESPONSE\n"
     fi
     return 0
   else
-      echo  "Test FAILED, EXPECTED HTTP Code: $expectedHttpCode, GOT: $httpCode, WILL ABORT!"
+      printf "${RED}KO: got $httpCode and expected $expectedHttpCode{NC}\n"
       echo  "- Failing command: $curlCmd"
       echo  "- Response Body: $RESPONSE"
       return 1
@@ -47,9 +49,9 @@ function assertEqual() {
 
   if [ "$actual" = "$expected" ]
   then
-    echo "Test OK (actual value: $actual)"
+    printf "${GREEN} OK ${NC} (actual value: $actual)\n"
   else
-    echo "Test FAILED, EXPECTED VALUE: $expected, ACTUAL VALUE: $actual, WILL ABORT"
+    printf "${RED}Test FAILED, EXPECTED VALUE: $expected, ACTUAL VALUE: $actual, WILL ABORT${NC}\n"
     return 1
   fi
 }
@@ -207,39 +209,39 @@ setupTestdata
 waitForMessageProcessing
 
 
-echo "\n# Verify that a normal request works, expect three recommendations and three reviews"
+echo -e "\n# Verify that a normal request works, expect three recommendations and three reviews"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
 assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId)
 assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
 
-echo "\n Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND)"
+echo -e "\n Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND)"
 assertCurl 404 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NOT_FOUND $AUTH -s"
 
-echo "# Verify that no recommendations are returned for productId $PROD_ID_NO_RECS"
+echo -e "# Verify that no recommendations are returned for productId $PROD_ID_NO_RECS"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NO_RECS $AUTH -s"
 assertEqual "$PROD_ID_NO_RECS" $(echo $RESPONSE | jq .productId)
 assertEqual 0 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
 
-echo "\n Verify that no reviews are returned for productId $PROD_ID_NO_REVS"
+echo -e "\n Verify that no reviews are returned for productId $PROD_ID_NO_REVS"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NO_REVS $AUTH -s"
 assertEqual $PROD_ID_NO_REVS $(echo $RESPONSE | jq .productId)
 assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 0 $(echo $RESPONSE | jq ".reviews | length")
 
-echo "\n\Verify that a 422 (Unprocessable Entity) error is returned for a productId that is out of range (-1)"
+echo -e "\n\Verify that a 422 (Unprocessable Entity) error is returned for a productId that is out of range (-1)"
 assertCurl 422 "curl -k https://$HOST:$PORT/product-composite/-1 $AUTH -s"
 assertEqual "\"Invalid productId: -1\"" "$(echo $RESPONSE | jq .message)"
 
-echo "\n Verify that a 400 (Bad Request) error error is returned for a productId that is not a number, i.e. invalid format"
+echo -e "\n Verify that a 400 (Bad Request) error error is returned for a productId that is not a number, i.e. invalid format"
 assertCurl 400 "curl -k https://$HOST:$PORT/product-composite/invalidProductId $AUTH -s"
 assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 
-echo "\n Verify that a request without access token fails on 401, Unauthorized
+echo -e "\n Verify that a request without access token fails on 401, Unauthorized"
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
-echo "\n Verify that the reader - client with only read scope can call the read API but not delete API.
+echo -e "\n Verify that the reader - client with only read scope can call the read API but not delete API."
 READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
@@ -248,7 +250,7 @@ assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS
 
 
 
-echo "End, all tests OK:" `date`
+echo -e "\nEnd, all tests OK:" `date`
 
 #if [[ $@ == *"stop"* ]]
 #then
