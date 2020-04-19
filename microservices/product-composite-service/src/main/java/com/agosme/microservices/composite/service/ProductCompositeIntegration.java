@@ -36,9 +36,9 @@ public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
   private final ObjectMapper mapper;
-  private final String productServiceUrl = "http://product";
-  private final String recommendationServiceUrl = "http://recommendation";
-  private final String reviewServiceUrl = "http://review";
+  private static final String productServiceUrl = "http://product";
+  private static final String recommendationServiceUrl = "http://recommendation";
+  private static final String reviewServiceUrl = "http://review";
   WebClientFactory webClientFactory;
   private MessageSources messageSources;
 
@@ -71,21 +71,8 @@ public class ProductCompositeIntegration
         .retrieve()
         .bodyToMono(Product.class)
         .log()
-        .onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
+        .onErrorMap(WebClientResponseException.class, this::handleException);
 
-    /*
-    try {
-      String url = productServiceUrl + "/" + productId;
-      LOG.debug("Will call the getProduct API on URL: {}", url);
-
-      Product product = restTemplate.getForObject(url, Product.class);
-      LOG.debug("Found a product with id: {}", product.getProductId());
-
-      return product;
-
-    } catch (HttpClientErrorException ex) {
-      throw handleHttpClientException(ex);
-    }*/
   }
 
   @Override
@@ -169,26 +156,11 @@ public class ProductCompositeIntegration
         .log()
         .onErrorResume(error -> empty());
   }
-/*
-  protected RuntimeException handleHttpClientException(HttpClientErrorException ex) {
-    switch (ex.getStatusCode()) {
-      case NOT_FOUND:
-        return new NotFoundException(getErrorMessage(ex));
 
-      case UNPROCESSABLE_ENTITY:
-        return new InvalidInputException(getErrorMessage(ex));
-
-      default:
-        LOG.warn("Got a unexpected HTTP error: {}, will rethrow it", ex.getStatusCode());
-        LOG.warn("Error body: {}", ex.getResponseBodyAsString());
-        return ex;
-    }
-  }
-*/
   private Throwable handleException(Throwable ex) {
 
     if (!(ex instanceof WebClientResponseException)) {
-      LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+      LOG.warn("Got a unexpected error: {0}, will rethrow it", ex);
       return ex;
     }
 

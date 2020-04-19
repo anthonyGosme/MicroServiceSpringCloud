@@ -69,8 +69,6 @@ public class ProductCompositeServiceApplicationTests {
         .thenThrow(new InvalidInputException("INVALID: " + PRODUCT_ID_INVALID));
   }
 
-  @Test
-  public void contextLoads() {}
 
   @Test
   public void getProductById() {

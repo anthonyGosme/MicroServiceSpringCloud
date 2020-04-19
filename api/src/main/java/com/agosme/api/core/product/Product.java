@@ -15,5 +15,4 @@ public class Product {
   private int weight;
   private String serviceAddress;
 
-  public void setServiceAddress(String serviceAddress) {}
 }
