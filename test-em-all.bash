@@ -17,13 +17,24 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
+
 function assertCurl() {
 
   local expectedHttpCode=$1
-  local curlCmd="$2 -w \"%{http_code}\""
-  local result=$(eval $curlCmd)
-  local httpCode="${result:(-3)}"
-  RESPONSE='' && (( ${#result} > 3 )) && RESPONSE="${result%???}"
+  local curlCmd="$2 -i"
+echo curl
+   result=$(eval $curlCmd)
+   status=$(echo "$result"|  head -n 2 | tail -n 1)
+   httpCode=$(echo "$result"| head -n 1 | awk  '{print  $2}')
+
+
+RESPONSE=$(echo "$result"| tail -n 1 )
+
+ # RESPONSE='' && (( ${#result} > 3 )) && RESPONSE="${result%???}"
+#echo "==$result"
+#echo "--$status"
+#echo "++$httpCode"
+#echo "**$RESPONSE"
 
   if [ "$httpCode" = "$expectedHttpCode" ]
   then
@@ -31,12 +42,13 @@ function assertCurl() {
     then
       printf "${GREEN}OK: $httpCode${NC}\n"
     else
-      printf "${GREEN}OK: $httpCode${NC} => $RESPONSE\n"
+      printf "${GREEN}OK: $httpCode${NC}\n $status => $RESPONSE\n"
     fi
     return 0
   else
-      printf "${RED}KO: got $httpCode and expected $expectedHttpCode{NC}\n"
+      printf "${RED}KO: got $httpCode and expected $expectedHttpCode${NC}\n"
       echo  "- Failing command: $curlCmd"
+      echo  "- response status:  $status"
       echo  "- Response Body: $RESPONSE"
       return 1
   fi
@@ -215,30 +227,30 @@ assertEqual "$PROD_ID_REVS_RECS" $(echo $RESPONSE | jq .productId)
 assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
 
-echo -e "\n Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND)"
+echo -e "\n\n Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND)"
 assertCurl 404 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NOT_FOUND $AUTH -s"
 
-echo -e "# Verify that no recommendations are returned for productId $PROD_ID_NO_RECS"
+echo -e "\n\nVerify that no recommendations are returned for productId $PROD_ID_NO_RECS"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NO_RECS $AUTH -s"
 assertEqual "$PROD_ID_NO_RECS" $(echo $RESPONSE | jq .productId)
 assertEqual 0 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 3 $(echo $RESPONSE | jq ".reviews | length")
 
-echo -e "\n Verify that no reviews are returned for productId $PROD_ID_NO_REVS"
+echo -e "\n\nVerify that no reviews are returned for productId $PROD_ID_NO_REVS"
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NO_REVS $AUTH -s"
 assertEqual $PROD_ID_NO_REVS $(echo $RESPONSE | jq .productId)
 assertEqual 3 $(echo $RESPONSE | jq ".recommendations | length")
 assertEqual 0 $(echo $RESPONSE | jq ".reviews | length")
 
-echo -e "\n\Verify that a 422 (Unprocessable Entity) error is returned for a productId that is out of range (-1)"
+echo -e "\n\nVerify that a 422 (Unprocessable Entity) error is returned for a productId that is out of range (-1)"
 assertCurl 422 "curl -k https://$HOST:$PORT/product-composite/-1 $AUTH -s"
 assertEqual "\"Invalid productId: -1\"" "$(echo $RESPONSE | jq .message)"
 
-echo -e "\n Verify that a 400 (Bad Request) error error is returned for a productId that is not a number, i.e. invalid format"
+echo -e "\n\n Verify that a 400 (Bad Request) error error is returned for a productId that is not a number, i.e. invalid format"
 assertCurl 400 "curl -k https://$HOST:$PORT/product-composite/invalidProductId $AUTH -s"
 assertEqual "\"Type mismatch.\"" "$(echo $RESPONSE | jq .message)"
 
-echo -e "\n Verify that a request without access token fails on 401, Unauthorized"
+echo -e "\n\n Verify that a request without access token fails on 401, Unauthorized"
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
 echo -e "\n Verify that the reader - client with only read scope can call the read API but not delete API."
@@ -250,7 +262,7 @@ assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS
 
 
 
-echo -e "\nEnd, all tests OK:" `date`
+printf "${GREEN}\nEnd, all tests OK:" `date`
 
 #if [[ $@ == *"stop"* ]]
 #then
