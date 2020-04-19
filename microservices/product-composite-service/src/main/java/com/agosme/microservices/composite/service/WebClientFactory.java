@@ -4,7 +4,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class WebClientFactory {
 
-  public WebClient webClient;
+  private WebClient webClient;
   private WebClient.Builder webClientBuilder;
 
   public WebClientFactory(WebClient.Builder webClientBuilder) {

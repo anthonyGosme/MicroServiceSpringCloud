@@ -1,8 +1,5 @@
 package com.agosme.microservices.composite;
 
-import com.agosme.microservices.composite.service.ProductCompositeServiceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -25,7 +22,6 @@ import static springfox.documentation.spi.DocumentationType.SWAGGER_2;
 @SpringBootApplication
 @ComponentScan("com.agosme")
 public class ProductCompositeServiceApplication {
-  private static final Logger LOG = LoggerFactory.getLogger(ProductCompositeServiceImpl.class);
 
   @Value("${api.common.version}")
   String apiVersion;
@@ -61,8 +57,7 @@ public class ProductCompositeServiceApplication {
   @Bean
   @LoadBalanced
   public WebClient.Builder loadBalancedWebClientBuilder() {
-    final WebClient.Builder builder = WebClient.builder();
-    return builder;
+    return WebClient.builder();
   }
 
   /**

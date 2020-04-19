@@ -19,13 +19,11 @@ public class EurekaServerApplicationTests {
 
   @Value("${app.eureka-username}")
   private String username;
+
   @Value("${app.eureka-password}")
   private String password;
   // TODO; Replace with WebTestClient
   @Autowired private TestRestTemplate testRestTemplate;
-
-  @Test
-  public void contextLoads() {}
 
   @Autowired
   public void setTestRestTemplate(TestRestTemplate testRestTemplate) {

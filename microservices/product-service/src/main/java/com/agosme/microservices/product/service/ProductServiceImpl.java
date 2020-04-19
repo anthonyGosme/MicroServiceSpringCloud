@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import static reactor.core.publisher.Mono.error;
+
 @RestController
 public class ProductServiceImpl implements ProductService {
   private static final Logger LOG = LoggerFactory.getLogger(ProductServiceImpl.class);
@@ -35,7 +36,7 @@ public class ProductServiceImpl implements ProductService {
   public Product createProduct(Product body) {
 
     if (body.getProductId() < 1)
-      throw new InvalidInputException("Invalid productId: " + body.getProductId());
+      throw new InvalidInputException("can't create Invalid productId: " + body.getProductId());
 
     ProductEntity entity = mapper.apiToEntity(body);
     Mono<Product> newEntity =
@@ -46,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
                 DuplicateKeyException.class,
                 ex ->
                     new InvalidInputException("Duplicate key, Product Id: " + body.getProductId()))
-            .map(e -> mapper.entityToApi(e));
+            .map(mapper::entityToApi);
 
     return newEntity.block();
   }
@@ -54,13 +55,13 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public Mono<Product> getProduct(int productId) {
 
-    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
+    if (productId < 1) throw new InvalidInputException("can't get Invalid productId: " + productId);
 
     return repository
         .findByProductId(productId)
         .switchIfEmpty(error(new NotFoundException("No product found for productId: " + productId)))
         .log()
-        .map(e -> mapper.entityToApi(e))
+        .map(mapper::entityToApi)
         .map(
             e -> {
               e.setServiceAddress(serviceUtil.getServiceAddress());
@@ -71,7 +72,8 @@ public class ProductServiceImpl implements ProductService {
   @Override
   public void deleteProduct(int productId) {
 
-    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
+    if (productId < 1)
+      throw new InvalidInputException("Ican't delete invalid productId: " + productId);
 
     LOG.debug("deleteProduct: tries to delete an entity with productId: {}", productId);
     repository

@@ -144,7 +144,7 @@ public class RecommendationServiceApplicationTests {
         .jsonPath("$.path")
         .isEqualTo("/recommendation")
         .jsonPath("$.message")
-        .isEqualTo("Invalid productId: " + productIdInvalid);
+        .isEqualTo("can't get Invalid productId: " + productIdInvalid);
   }
 
   private WebTestClient.BodyContentSpec getAndVerifyRecommendationsByProductId(

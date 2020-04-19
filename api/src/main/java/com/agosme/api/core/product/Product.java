@@ -14,5 +14,4 @@ public class Product {
   private String name;
   private int weight;
   private String serviceAddress;
-
 }

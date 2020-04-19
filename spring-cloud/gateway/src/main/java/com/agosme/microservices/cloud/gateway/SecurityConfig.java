@@ -1,7 +1,5 @@
 package com.agosme.microservices.cloud.gateway;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
@@ -10,10 +8,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-  private static final Logger LOG = LoggerFactory.getLogger(SecurityConfig.class);
-
   @Bean
-  SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) throws Exception {
+  SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
     http.csrf()
         .disable()
         .authorizeExchange()

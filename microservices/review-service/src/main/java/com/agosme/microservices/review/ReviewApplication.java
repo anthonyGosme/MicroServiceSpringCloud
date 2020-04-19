@@ -31,12 +31,12 @@ public class ReviewApplication {
     ConfigurableApplicationContext ctx = SpringApplication.run(ReviewApplication.class, args);
 
     String mysqlUrl = ctx.getEnvironment().getProperty("spring.datasource.url");
-    LOG.info("Connected to MysSQl: " + mysqlUrl);
+    LOG.info("Connected to MysSQl: {}", mysqlUrl);
   }
 
   @Bean
   public Scheduler jdbcScheduler() {
-    LOG.info("Creates a jdbcScheduler with connectionPoolSize = " + connectionPoolSize);
+    LOG.info("Creates a jdbcScheduler with connectionPoolSize = {}", connectionPoolSize);
     return Schedulers.fromExecutor(Executors.newFixedThreadPool(connectionPoolSize));
   }
 }

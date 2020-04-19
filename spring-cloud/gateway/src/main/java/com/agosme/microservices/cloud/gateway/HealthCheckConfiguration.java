@@ -17,7 +17,7 @@ public class HealthCheckConfiguration {
   private static final Logger LOG = LoggerFactory.getLogger(HealthCheckConfiguration.class);
   private final WebClient.Builder webClientBuilder;
   private HealthAggregator healthAggregator;
-  public WebClient webClient;
+  private WebClient webClient;
 
   @Autowired
   public HealthCheckConfiguration(

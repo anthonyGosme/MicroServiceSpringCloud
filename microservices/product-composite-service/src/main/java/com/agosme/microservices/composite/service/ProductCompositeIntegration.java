@@ -35,10 +35,10 @@ import static reactor.core.publisher.Flux.empty;
 public class ProductCompositeIntegration
     implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
+  private static final String PRODUCT_SERVICE_URL = "http://product";
+  private static final String RECOMMENDATION_SERVICE_URL = "http://recommendation";
+  private static final String REVIEW_SERVICE_URL = "http://review";
   private final ObjectMapper mapper;
-  private static final String productServiceUrl = "http://product";
-  private static final String recommendationServiceUrl = "http://recommendation";
-  private static final String reviewServiceUrl = "http://review";
   WebClientFactory webClientFactory;
   private MessageSources messageSources;
 
@@ -61,7 +61,7 @@ public class ProductCompositeIntegration
 
   @Override
   public Mono<Product> getProduct(int productId) {
-    String url = productServiceUrl + "/product/" + productId;
+    String url = PRODUCT_SERVICE_URL + "/product/" + productId;
     LOG.debug("Will call the getProduct API on URL: {}", url);
 
     return webClientFactory
@@ -72,7 +72,6 @@ public class ProductCompositeIntegration
         .bodyToMono(Product.class)
         .log()
         .onErrorMap(WebClientResponseException.class, this::handleException);
-
   }
 
   @Override
@@ -110,7 +109,7 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Recommendation> getRecommendations(int productId) {
 
-    String url = recommendationServiceUrl + "/recommendation?productId=" + productId;
+    String url = RECOMMENDATION_SERVICE_URL + "/recommendation?productId=" + productId;
 
     LOG.debug("Will call the getRecommendations API on URL: {}", url);
 
@@ -144,7 +143,7 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Review> getReviews(int productId) {
 
-    String url = reviewServiceUrl + "/review?productId=" + productId;
+    String url = REVIEW_SERVICE_URL + "/review?productId=" + productId;
 
     LOG.debug("Will call getReviews API on URL: {}", url);
     return webClientFactory
@@ -188,15 +187,15 @@ public class ProductCompositeIntegration
   }
 
   public Mono<Health> getProductHealth() {
-    return getHealth(productServiceUrl);
+    return getHealth(PRODUCT_SERVICE_URL);
   }
 
   public Mono<Health> getRecommendationHealth() {
-    return getHealth(recommendationServiceUrl);
+    return getHealth(RECOMMENDATION_SERVICE_URL);
   }
 
   public Mono<Health> getReviewHealth() {
-    return getHealth(reviewServiceUrl);
+    return getHealth(REVIEW_SERVICE_URL);
   }
 
   private Mono<Health> getHealth(String url) {

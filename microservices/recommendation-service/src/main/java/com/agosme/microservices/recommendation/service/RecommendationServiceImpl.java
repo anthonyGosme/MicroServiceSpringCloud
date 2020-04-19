@@ -37,7 +37,7 @@ public class RecommendationServiceImpl implements RecommendationService {
   public Recommendation createRecommendation(Recommendation body) {
 
     if (body.getProductId() < 1)
-      throw new InvalidInputException("Invalid productId: " + body.getProductId());
+      throw new InvalidInputException("can't create Invalid productId: " + body.getProductId());
 
     RecommendationEntity entity = mapper.apiToEntity(body);
     Mono<Recommendation> newEntity =
@@ -52,7 +52,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                             + body.getProductId()
                             + ", Recommendation Id:"
                             + body.getRecommendationId()))
-            .map(e -> mapper.entityToApi(e));
+            .map(mapper::entityToApi);
 
     return newEntity.block();
   }
@@ -60,12 +60,12 @@ public class RecommendationServiceImpl implements RecommendationService {
   @Override
   public Flux<Recommendation> getRecommendations(int productId) {
 
-    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
+    if (productId < 1) throw new InvalidInputException("can't get Invalid productId: " + productId);
 
     return repository
         .findByProductId(productId)
         .log()
-        .map(e -> mapper.entityToApi(e))
+        .map(mapper::entityToApi)
         .map(
             e -> {
               e.setServiceAddress(serviceUtil.getServiceAddress());
@@ -76,7 +76,7 @@ public class RecommendationServiceImpl implements RecommendationService {
   @Override
   public void deleteRecommendations(int productId) {
 
-    if (productId < 1) throw new InvalidInputException("Invalid productId: " + productId);
+    if (productId < 1) throw new InvalidInputException("can't delete Invalid productId: " + productId);
 
     LOG.debug(
         "deleteRecommendations: tries to delete recommendations for the product with productId: {}",

@@ -4,16 +4,16 @@ import com.agosme.api.core.product.Product;
 import com.agosme.microservices.product.persistance.ProductEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.springframework.stereotype.Service;
 
 @Mapper(componentModel = "spring")
 @Service
 public interface ProductMapper {
 
-  @Mappings({@Mapping(target = "serviceAddress", ignore = true)})
+  @Mapping(target = "serviceAddress", ignore = true)
   Product entityToApi(ProductEntity entity);
 
-  @Mappings({@Mapping(target = "id", ignore = true), @Mapping(target = "version", ignore = true)})
+  @Mapping(target = "id", ignore = true)
+  @Mapping(target = "version", ignore = true)
   ProductEntity apiToEntity(Product api);
 }

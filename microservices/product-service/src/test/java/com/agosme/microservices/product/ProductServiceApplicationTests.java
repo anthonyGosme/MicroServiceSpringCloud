@@ -131,7 +131,7 @@ public class ProductServiceApplicationTests {
         .jsonPath("$.path")
         .isEqualTo("/product/" + productIdInvalid)
         .jsonPath("$.message")
-        .isEqualTo("Invalid productId: " + productIdInvalid);
+        .isEqualTo("can't get Invalid productId: " + productIdInvalid);
   }
 
   private WebTestClient.BodyContentSpec getAndVerifyProduct(

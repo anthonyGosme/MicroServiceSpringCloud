@@ -90,8 +90,8 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
           body.getProductId());
 
     } catch (RuntimeException re) {
-      LOG.warn("createCompositeProduct failed", re);
-      throw re;
+
+      throw new RuntimeException("createCompositeProduct failed", re);
     }
   }
 
@@ -109,7 +109,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
             integration.getProduct(productId),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
-        .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
+        .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex))
         .log();
   }
 
@@ -133,8 +133,8 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
       LOG.debug("deleteCompositeProduct: aggregate entities deleted for productId: {}", productId);
 
     } catch (RuntimeException re) {
-      LOG.warn("deleteCompositeProduct failed: {}", re.toString());
-      throw re;
+
+      throw new RuntimeException("createCompositeProduct failed", re);
     }
   }
 
@@ -177,9 +177,9 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
     // 4. Create info regarding the involved microservices addresses
     String productAddress = product.getServiceAddress();
     String reviewAddress =
-        (reviews != null && reviews.size() > 0) ? reviews.get(0).getServiceAddress() : "";
+        (reviews != null && !reviews.isEmpty()) ? reviews.get(0).getServiceAddress() : "";
     String recommendationAddress =
-        (recommendations != null && recommendations.size() > 0)
+        (recommendations != null && !recommendations.isEmpty())
             ? recommendations.get(0).getServiceAddress()
             : "";
     ServiceAddresses serviceAddresses =
