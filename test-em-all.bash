@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# ./grdelw clean build
+# ./gradlew clean build
 # docker-compose build
 # docker-compose up -d
 #
@@ -214,7 +214,7 @@ then
 fi
 
 waitForService curl -k https://$HOST:$PORT/actuator/health
-ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=anthony -d password=password -s | jq .access_token -r)
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""
 
 setupTestdata
@@ -254,7 +254,7 @@ echo -e "\n\n Verify that a request without access token fails on 401, Unauthori
 assertCurl 401 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS -s"
 
 echo -e "\n Verify that the reader - client with only read scope can call the read API but not delete API."
-READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=magnus -d password=password -s | jq .access_token -r)
+READER_ACCESS_TOKEN=$(curl -k https://reader:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=anthony -d password=password -s | jq .access_token -r)
 READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -s"

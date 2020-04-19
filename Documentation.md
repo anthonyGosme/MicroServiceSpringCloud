@@ -187,3 +187,26 @@ keytool -genkeypair -alias localhost -keyalg RSA -keysize 2048 -storetype PKCS12
 
 curl -H "accept:application/json" https://u:p@localhost:8443/eureka/api/apps -kv | jq 
 browser https://localhost:8443/eureka/web/
+
+
+# Authorization server workflows tests
+## password grant flow
+curl -kv  https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=anthony -d password=password | jq .
+curl -kv  https://reader:secret@localhost:8443/oauth/token -d grant_type=password -d username=anthony -d password=password | jq .
+
+## implicit grant flow
+browser https://localhost:8443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=http://my.redirect.uri&scope=product:read&state=48532
+
+## code grant flow (most secure get code exhnge it with access token) 
+call auth server from user browser 
+ https://localhost:8443/oauth/authorize?response_type=code&client_id=reader&redirect_uri=http://my.redirect.uri&scope=product:read&state=4853
+retrieve the code 
+http://my.redirect.uri/?code=8tRbxG&state=4853
+act as the client server app (reader )calling back the auth server in backend mode -> 
+curl -kv  https://reader:secret@localhost:8443/oauth/token -d grant_type=authorization_code -d client_id=reader -d redirect_uri=http://my.redirect.uri -d code=8tRbxG | jq .
+
+#use acces token to acces the api
+ACCESS_TOKEN1=invalidAccessToken
+ACCESS_TOKEN2=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbnRob255IiwiZXhwIjoyMTg3MzA3NzQwLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwianRpIjoiMDI1MGE3MWUtNjQwOC00ZDQ3LTk4MTEtZDQ2YWQ0NTc2NGRmIiwiY2xpZW50X2lkIjoicmVhZGVyIiwic2NvcGUiOlsicHJvZHVjdDpyZWFkIl19.bzlFycmVrM8VZ1vkHMmnT5IwyJ6PEN3nWeYHEo44Oa_h3yrrzIKKTwE8AD9_opw_cSw1gfv_fZyo23hGwQ-l1FjHYGpjA7UXnk1-VBYfWulqzgVMQl7gjooIX-SWO2bF0fstd1kPGQizDJfSuOxv4Zt35s4lJk19muW7vzh-fdWpwgnktlD98oIBYuok5S9WM_akfxIPhJo3HzX2qsKcEoxkfPwqpXLpun4bEVYqHdV2wRiP5evF2P599w-ELkdI3e0oODaffuOQhF6bc6b-n6GWfUXJ49G_OTeXAV-Id3jvrAja6zIlYhPqSMLycXZFBCv5TwJ4h8ekFd0Jzh5mDA
+curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN2" -i
+curl https://localhost:8443/product-composite/2 -k -H "Authorization: Bearer $ACCESS_TOKEN2" -i -X DELETE
