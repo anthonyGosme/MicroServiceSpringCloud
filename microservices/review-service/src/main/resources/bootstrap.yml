@@ -1,7 +1,9 @@
+spring.profiles.active: dev
+# in production add environnement variable  ->  CONFIG_SERVER_USR=dev-usr  &CONFIG_SERVER_PWD=dev-pwd
 app.config-server: localhost
 
 spring:
-  application.name: auth-server
+  application.name: review
   cloud.config:
     failFast: true
     retry:
@@ -12,6 +14,10 @@ spring:
     uri: http://${CONFIG_SERVER_USR}:${CONFIG_SERVER_PWD}@${app.config-server}:8888
 
 ---
-spring.profiles: docker
+spring.profiles: dev
+CONFIG_SERVER_USR: dev-usr
+CONFIG_SERVER_PWD: dev-pwd
 
+---
+spring.profiles: docker
 app.config-server: config-server

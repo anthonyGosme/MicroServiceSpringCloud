@@ -120,11 +120,8 @@ function waitForService() {
   n=0
   until testUrl $url; do
     n=$((n + 1))
-    if [[ $n == 10 ]]; then
+    if [[ $n == 20 ]]; then
       echo " Give up"
-      echo "Stopping the test environment..."
-      echo "$ docker-compose down --remove-orphans"
-      docker-compose down --remove-orphans
       exit 1
     else
       sleep 6

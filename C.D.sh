@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source .env
 set -e
 ./gradlew build -x test
 echo usage ./C.D.sh docker-compose-custo
