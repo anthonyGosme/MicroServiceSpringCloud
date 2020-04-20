@@ -42,7 +42,8 @@ import static reactor.core.publisher.Mono.just;
     classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class},
     properties = {
       "spring.main.allow-bean-definition-overriding=true",
-      "eureka.client.enabled=false"
+      "eureka.client.enabled=false",
+      "spring.cloud.config.enabled=false"
     })
 public class MessagingTests {
 

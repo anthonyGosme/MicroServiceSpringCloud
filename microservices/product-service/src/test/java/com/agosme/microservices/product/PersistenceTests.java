@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import reactor.test.StepVerifier;
 // test uniquement la partie persistance  sans passer par l'API
 @RunWith(SpringRunner.class)
-@DataMongoTest
+@DataMongoTest(properties = {"spring.cloud.config.enabled=false"})
 public class PersistenceTests {
 
   @Autowired private ProductRepository repository;
