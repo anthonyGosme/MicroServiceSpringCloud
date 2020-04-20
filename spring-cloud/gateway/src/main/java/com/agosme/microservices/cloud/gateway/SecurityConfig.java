@@ -21,6 +21,8 @@ public class SecurityConfig {
         .permitAll()
         .pathMatchers("/oauth/**")
         .permitAll()
+        .pathMatchers("/config/**")
+        .permitAll()
         .anyExchange()
         .authenticated()
         .and()

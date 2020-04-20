@@ -217,3 +217,8 @@ anthonygosme.eu.auth0.com
 rD9ymywibx4qC5x4smBlhvF783wtpo3N
 weVDJA2yrR60EzKpjI3-1S8KrNYw3_7xVr-Zq11FQrtBy-MUoEDUtAcUvku4vRPC
 ..ou7_
+
+#config server
+http://b:b@localhost:8888/test/dev
+    http://a:a@localhost:8888/test/dev
+http://localhost:8888/test/dev

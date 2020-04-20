@@ -16,8 +16,7 @@ app:
   eureka-password: p
   eureka-server: localhost
   auth-server: localhost
-
-
+  config-server: localhost
 eureka:
   client:
     serviceUrl:

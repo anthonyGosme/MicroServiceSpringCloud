@@ -158,9 +158,11 @@ services:
       - SPRING_SECURITY_USER_NAME=${CONFIG_SERVER_USR}
       - SPRING_SECURITY_USER_PASSWORD=${CONFIG_SERVER_PWD}
     volumes:
-      - $PWD/config-repo:/config-repo
+      - /Users/toto/Repo/git/MicroServiceSpringCloud/config-repo:/config-repo
     build: spring-cloud/config-server
     mem_limit: 350m
+    ports:
+      - 8888:8888
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8888/actuator/health}"
       interval: 30s
