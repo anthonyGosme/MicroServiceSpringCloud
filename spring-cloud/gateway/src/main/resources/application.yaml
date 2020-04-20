@@ -38,6 +38,12 @@ spring.cloud.gateway.routes:
     uri: lb://product-composite
     predicates:
       - Path=/product-composite/**
+  - id: config-server
+    uri: http://${app.config-server}:8888
+    predicates:
+      - Path=/config/**
+    filters:
+      - RewritePath=/config/(?<segment>.*>), /$\{segment}
   - id: oauth-server
     uri: lb://auth-server
     predicates:

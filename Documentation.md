@@ -11,16 +11,16 @@ docker-compose kill product-service & docker-compose up product-service
 
 
 spring init \
---boot-version=2.2.5.RELEASE \
+--boot-version=2.2.6.RELEASE \
 --build=gradle \
 --java-version=11 \
 --packaging=jar \
 --name= \
---package-name=com.agosme.microservices.cloud.auth-server \
---groupId=com.agosme.microservices.cloud.auth-server \
+--package-name=com.agosme.microservices.cloud.config-server \
+--groupId=com.agosme.microservices.cloud.config-server \
 --dependencies=actuator \
 --version=1.0.0-SNAPSHOT \
-auth-server
+config-server
 
 spring init \
 --boot-version=2.2.5.RELEASE \

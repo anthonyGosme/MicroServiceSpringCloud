@@ -1,0 +1,42 @@
+buildscript {
+	ext {
+		springBootVersion = '2.2.6.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.agosme.microservices.cloud.config-server'
+
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = 11
+
+repositories {
+	mavenCentral()
+	maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local/' }
+}
+
+ext {
+	springCloudVersion = "Hoxton.RELEASE"
+}
+
+dependencies {
+	implementation('org.springframework.boot:spring-boot-starter-security')
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.cloud:spring-cloud-config-server:2.1.2.RELEASE'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
