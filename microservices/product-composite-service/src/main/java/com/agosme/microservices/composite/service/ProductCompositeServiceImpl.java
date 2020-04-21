@@ -21,6 +21,7 @@ import reactor.core.publisher.Mono;
 
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 @RestController
@@ -101,6 +102,7 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   @Override
   public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
 
+
     return Mono.zip(
             values ->
                     createProductAggregate(
@@ -114,9 +116,13 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
                     .getProduct(productId, delay, faultPercent)
                     .onErrorMap(
                             RetryExceptionWrapper.class, retryException -> retryException.getCause())
+                   // .onErrorResume(
+                     //       TimeoutException.class,
+                       //     error -> Mono.just(getProductFallbackValue(productId)))
                     .onErrorReturn(
                             RequestHandlerCircuitBreakerAdvice.CircuitBreakerOpenException.class,
-                            getProductFallbackValue(productId)),
+                            getProductFallbackValue(productId))
+            ,
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
             .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))

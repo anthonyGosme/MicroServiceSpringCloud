@@ -30,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
   @Autowired
   public ProductServiceImpl(
 
-          ProductMapper mapper, ServiceUtil serviceUtil, ProductRepository repository) {
+                  ProductMapper mapper, ServiceUtil serviceUtil, ProductRepository repository) {
 
     this.mapper = mapper;
     this.serviceUtil = serviceUtil;

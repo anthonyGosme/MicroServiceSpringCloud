@@ -16,6 +16,7 @@
 : ${PROD_ID_NO_REVS=214}
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+OTHER='\033[0;33m'
 NC='\033[0m' # No Color
 
 function assertCurl() {
@@ -170,6 +171,60 @@ function setupTestdata() {
 
 }
 
+function testCircuitBreaker() {
+  printf "${OTHER}\n\nCircuit breaker \n=============\n${NC}\n"
+
+  echo "Start Circuit Breaker tests!"
+
+  EXEC="docker run --rm -it --network=my-network alpine"
+  echo "# First, use the health - endpoint to verify that the circuit breaker is closed"
+  ###assertEqual "CLOSED" "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .details.productCircuitBreaker.details.state)"
+  assertEqual "CLOSED" "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
+
+  echo "# Open the circuit breaker by running three slow calls in a row, i.e. that cause a timeout exception"
+  echo "# Also, verify that we get 500 back and a timeout related error message"
+  for ((n = 0; n < 3; n++)); do
+    assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS?delay=3 $AUTH -s"
+    message=$(echo $RESPONSE | jq -r .message)
+    assertEqual "Did not observe any item or terminal signal within 2000ms" "${message:0:57}"
+  done
+
+  echo "#Verify that the circuit breaker now is open by running the slow call again, verify it gets 200 (or 500) back, i.e. fail fast works, and a response from the fallback method."
+   echo "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS?delay=3 $AUTH -s"
+   assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS?delay=3 $AUTH -s"
+ ### assertEqual "Fallback product2" "$(echo "$RESPONSE")"
+
+  echo "# Also, verify that the circuit breaker is open by running a normal call, verify it also gets 200 back and a response from the fallback method."
+  assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
+ # assertEqual "Fallback product2" "$(echo "$RESPONSE" | jq -r .name)"
+
+ # echo "# Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND) from the fallback method."
+  assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NOT_FOUND $AUTH -s"
+#  assertEqual "Product Id: $PROD_ID_NOT_FOUND not found in fallback cache!" "$(echo $RESPONSE | jq -r .message)"
+
+  echo "Wait for the circuit breaker to transition to the half open state (i.e. max 10 sec)"
+  echo "Will sleep for 10 sec waiting for the CB to go Half Open..."
+  sleep 10
+
+  echo "Verify that the circuit breaker is in half open state"
+  echo "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
+  assertEqual "HALF_OPEN" "$(curl http://localhost:7000/actuator/health  | jq -r .components.circuitBreakers.details.product.details.state)"
+  echo "# Close the circuit breaker by running three normal calls in a row"
+  echo "# Also, verify that we get 200 back and a response based on information in the product database"
+  for ((n = 0; n < 3; n++)); do
+    assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
+    assertEqual "product name C" "$(echo "$RESPONSE" | jq -r .name)"
+  done
+
+  echo "# Verify that the circuit breaker is in closed state again"
+  assertEqual "CLOSED" "$(curl http://localhost:7000/actuator/health  | jq -r .components.circuitBreakers.details.product.details.state)"
+
+  echo "# Verify that the expected state transitions happened in the circuit breaker"
+  assertEqual '"CLOSED_TO_OPEN"' "$(curl http://localhost:7000/actuator/circuitbreakerevents/product/STATE_TRANSITION | jq '.circuitBreakerEvents[-3].stateTransition')"
+  assertEqual '"OPEN_TO_HALF_OPEN"' "$(curl http://localhost:7000/actuator/circuitbreakerevents/product/STATE_TRANSITION | jq '.circuitBreakerEvents[-2].stateTransition')"
+  assertEqual '"HALF_OPEN_TO_CLOSED"' "$(curl http://localhost:7000/actuator/circuitbreakerevents/product/STATE_TRANSITION | jq '.circuitBreakerEvents[-1].stateTransition')"
+}
+
 set -e
 
 echo "Start Tests:" $(date)
@@ -237,6 +292,8 @@ READER_AUTH="-H \"Authorization: Bearer $READER_ACCESS_TOKEN\""
 
 assertCurl 200 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -s"
 assertCurl 403 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $READER_AUTH -X DELETE -s"
+
+testCircuitBreaker
 
 printf "${GREEN}\nEnd, all tests OK:" $(date)
 

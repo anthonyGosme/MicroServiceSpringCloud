@@ -1,27 +1,3 @@
-
-app.product-service.timeoutSec: 2
-
-resilience4j.retry:
-  backends:
-    product:
-      maxRetryAttempts: 3
-      waitDuration: 1000
-      retryExceptions:
-        - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError
-
-resilience4j.circuitbreaker:
-  backends:
-    product:
-      registerHealthIndicator: true
-      ringBufferSizeInClosedState: 5
-      failureRateThreshold: 50
-      waitInterval: 10000
-      ringBufferSizeInHalfOpenState: 3
-      automaticTransitionFromOpenToHalfOpenEnabled: true
-      ignoreExceptions:
-        - com.agosme.util.exceptions.InvalidInputException
-        - com.agosme.util.exceptions.NotFoundException
-
 api:
 
   common:
@@ -96,6 +72,34 @@ spring.cloud.stream:
         required-groups: auditGroup
 
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://${app.auth-server}:9999/.well-known/jwks.json
+
+app.product-service.timeoutSec: 2
+
+resilience4j.retry:
+  backends:
+    product:
+      maxRetryAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+        - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError
+
+resilience4j.circuitbreaker:
+  backends:
+    product:
+      registerHealthIndicator: true
+      ringBufferSizeInClosedState: 5
+      failureRateThreshold: 50
+      waitInterval: 10000
+      waitDurationInOpenState: 10s
+      ringBufferSizeInHalfOpenState: 3
+      permittedNumberOfCallsInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      ignoreExceptions:
+        - com.agosme.util.exceptions.InvalidInputException
+        - com.agosme.util.exceptions.NotFoundException
+management.health:
+  circuitbreakers.enabled: true
+  ratelimiters.enabled: true
 
 logging:
   level:

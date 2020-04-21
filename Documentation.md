@@ -224,3 +224,13 @@ http://localhost:8888/review/default
 curl https://dev-usr:dev-pwd@localhost:8443/config/product/docker -ks | jq .
 curl https://dev-usr:dev-pwd@localhost:8443/config/encrypt -k --data-urlencode "hello world" 
 curl https://dev-usr:dev-pwd@localhost:8443/config/decrypt -dc7d289e6cc613eedc709b4223a5e1fde6053048c2694d2dc1cb800a3e668866d%        
+
+#resilience4J
+curl -kv  https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=anthony -d password=password | jq .access_token
+ACCESS_TOKEN=
+curl 'http://localhost:7000/product-composite/2?faultPercent=25'  -H "Authorization: Bearer $ACCESS_TOKEN" 
+
+voir le temps
+time curl 'http://localhost:7000/product-composite/2?faultPercent=25' -w "%{http_code}\n" -o /dev/null -s  -H "Authorization: Bearer $ACCESS_TOKEN"
+--->  0.00s user 0.00s system 27% cpu 0.032 total  -> ok pas de retry
+--> 0.00s user 0.00s system 0% cpu 1.039 total -> ko un retry
