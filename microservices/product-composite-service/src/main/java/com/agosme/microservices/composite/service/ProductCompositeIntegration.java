@@ -11,6 +11,8 @@ import com.agosme.util.exceptions.InvalidInputException;
 import com.agosme.util.exceptions.NotFoundException;
 import com.agosme.util.http.HttpErrorInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.time.Duration;
 
 import static com.agosme.api.event.Event.Type.CREATE;
 import static com.agosme.api.event.Event.Type.DELETE;
@@ -59,6 +62,8 @@ public class ProductCompositeIntegration
     return body;
   }
 
+  @Retry(name = "product")
+  @CircuitBreaker(name = "product")
   @Override
   public Mono<Product> getProduct(int productId) {
     String url = PRODUCT_SERVICE_URL + "/product/" + productId;
@@ -71,7 +76,7 @@ public class ProductCompositeIntegration
         .retrieve()
         .bodyToMono(Product.class)
         .log()
-        .onErrorMap(WebClientResponseException.class, this::handleException);
+        .onErrorMap(WebClientResponseException.class, this::handleException) .timeout(Duration.ofSeconds(20000));
   }
 
   @Override
