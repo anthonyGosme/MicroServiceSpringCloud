@@ -221,20 +221,6 @@ weVDJA2yrR60EzKpjI3-1S8KrNYw3_7xVr-Zq11FQrtBy-MUoEDUtAcUvku4vRPC
 #config server
 http://localhost:8888/auth-server/default
 http://localhost:8888/review/default
-
-
-docker stats
------
-CONTAINER ID        NAME                                          CPU %               MEM USAGE / LIMIT   MEM %               NET I/O             BLOCK I/O           PIDS
-e68eeb16a669        microservicespringcloud_recommendation_1      0.15%               304.3MiB / 350MiB   86.95%              132kB / 80.9kB      0B / 0B             58
-81fa82a1972c        microservicespringcloud_product_1             1.22%               329.3MiB / 350MiB   94.09%              129kB / 77.5kB      0B / 0B             54
-fa9a69438554        microservicespringcloud_product-composite_1   0.27%               300.3MiB / 350MiB   85.80%              99.6kB / 89.6kB     0B / 0B             54
-9e4f1e051c59        microservicespringcloud_review_1              1.49%               348.3MiB / 350MiB   99.52%              167kB / 136kB       0B / 0B             62
-58cf7fd42acb        microservicespringcloud_config-server_1       0.28%               149.6MiB / 350MiB   42.73%              4.32kB / 13.7kB     0B / 0B             29
-856d23c06a79        microservicespringcloud_gateway_1             2.82%               311.4MiB / 350MiB   88.96%              222kB / 137kB       0B / 0B             50
-55038c04588b        microservicespringcloud_mongodb_1             0.26%               40.95MiB / 350MiB   11.70%              43kB / 120kB        0B / 0B             31
-d1b3686223e9        microservicespringcloud_auth-server_1         0.27%               225.4MiB / 350MiB   64.40%              79.4kB / 67.2kB     0B / 0B             39
-ee8fe9a5a0be        microservicespringcloud_mysql_1               0.08%               197.7MiB / 350MiB   56.48%              69.1kB / 78.6kB     0B / 0B             38
-95811646d01a        microservicespringcloud_eureka_1              1.56%               187.6MiB / 350MiB   53.60%              220kB / 367kB       0B / 0B             36
-a8dcb37895cb        microservicespringcloud_rabbitmq_1            119.10%             101.8MiB / 350MiB   29.07%              29.8kB / 23.9kB     0B / 0B             163
-
+curl https://dev-usr:dev-pwd@localhost:8443/config/product/docker -ks | jq .
+curl https://dev-usr:dev-pwd@localhost:8443/config/encrypt -k --data-urlencode "hello world" 
+curl https://dev-usr:dev-pwd@localhost:8443/config/decrypt -dc7d289e6cc613eedc709b4223a5e1fde6053048c2694d2dc1cb800a3e668866d%        

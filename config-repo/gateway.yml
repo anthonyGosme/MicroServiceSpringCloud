@@ -4,6 +4,7 @@ server.ssl:
   key-store-type: PKCS12
   key-store: classpath:keystore/edge.p12
   key-store-password: password
+  #key-store-password: '{cipher}139ec6b94dcde78e7630d45b8fd853137db30b9b845cb9de5edec847ffb7cfc5'
   key-alias: localhost
 
 app.config-server: localhost
