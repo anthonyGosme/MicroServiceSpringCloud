@@ -4,10 +4,13 @@ import com.agosme.api.composite.*;
 import com.agosme.api.core.product.Product;
 import com.agosme.api.core.recommendation.Recommendation;
 import com.agosme.api.core.review.Review;
+import com.agosme.util.exceptions.NotFoundException;
 import com.agosme.util.http.ServiceUtil;
+import io.github.resilience4j.reactor.retry.RetryExceptionWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.handler.advice.RequestHandlerCircuitBreakerAdvice;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -96,28 +99,49 @@ public class ProductCompositeServiceImpl implements ProductCompositeService {
   }
 
   @Override
-  public Mono<ProductAggregate> getCompositeProduct(int productId) {
+  public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
+
     return Mono.zip(
             values ->
-                createProductAggregate(
-                    (SecurityContext) values[0],
-                    (Product) values[1],
-                    (List<Recommendation>) values[2],
-                    (List<Review>) values[3],
-                    serviceUtil.getServiceAddress()),
+                    createProductAggregate(
+                            (SecurityContext) values[0],
+                            (Product) values[1],
+                            (List<Recommendation>) values[2],
+                            (List<Review>) values[3],
+                            serviceUtil.getServiceAddress()),
             ReactiveSecurityContextHolder.getContext().defaultIfEmpty(nullSC),
-            integration.getProduct(productId),
+            integration
+                    .getProduct(productId, delay, faultPercent)
+                    .onErrorMap(
+                            RetryExceptionWrapper.class, retryException -> retryException.getCause())
+                    .onErrorReturn(
+                            RequestHandlerCircuitBreakerAdvice.CircuitBreakerOpenException.class,
+                            getProductFallbackValue(productId)),
             integration.getRecommendations(productId).collectList(),
             integration.getReviews(productId).collectList())
-        .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex))
-        .log();
+            .doOnError(ex -> LOG.warn("getCompositeProduct failed: {}", ex.toString()))
+            .log();
+  }
+
+  private Product getProductFallbackValue(int productId) {
+
+    LOG.warn("Creating a fallback product for productId = {}", productId);
+
+    if (productId == 13) {
+      String errMsg = "Product Id: " + productId + " not found in fallback cache!";
+      LOG.warn(errMsg);
+      throw new NotFoundException(errMsg);
+    }
+
+    return new Product(
+            productId, "Fallback product" + productId, productId, serviceUtil.getServiceAddress());
   }
 
   @Override
   public Mono<Void> deleteCompositeProduct(int productId) {
     return ReactiveSecurityContextHolder.getContext()
-        .doOnSuccess(sc -> internalDeleteCompositeProduct(sc, productId))
-        .then();
+            .doOnSuccess(sc -> internalDeleteCompositeProduct(sc, productId))
+            .then();
   }
 
   private void internalDeleteCompositeProduct(SecurityContext sc, int productId) {

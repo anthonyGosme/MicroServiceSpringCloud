@@ -47,18 +47,21 @@ public interface ProductCompositeService {
       notes = "${api.product-composite.get-composite-product.notes}")
   @ApiResponses(
       value = {
-        @ApiResponse(
-            code = 400,
-            message =
-                "Bad Request, invalid format of the request. See response message for more information."),
-        @ApiResponse(code = 404, message = "Not found, the specified id does not exist."),
-        @ApiResponse(
-            code = 422,
-            message =
-                "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.")
+              @ApiResponse(
+                      code = 400,
+                      message =
+                              "Bad Request, invalid format of the request. See response message for more information."),
+              @ApiResponse(code = 404, message = "Not found, the specified id does not exist."),
+              @ApiResponse(
+                      code = 422,
+                      message =
+                              "Unprocessable entity, input parameters caused the processing to fails. See response message for more information.")
       })
   @GetMapping(value = "/product-composite/{productId}", produces = "application/json")
-  Mono<ProductAggregate> getCompositeProduct(@PathVariable int productId);
+  Mono<ProductAggregate> getCompositeProduct(
+          @PathVariable int productId,
+          @RequestParam(value = "delay", required = false, defaultValue = "0") int delay,
+          @RequestParam(value = "faultPercent", required = false, defaultValue = "0") int faultPercent);
 
   /**
    * Sample usage:

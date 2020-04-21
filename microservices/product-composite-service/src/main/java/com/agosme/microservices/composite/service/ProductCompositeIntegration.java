@@ -16,6 +16,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.integration.support.MessageBuilder;
@@ -23,10 +24,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.net.URI;
 import java.time.Duration;
 
 import static com.agosme.api.event.Event.Type.CREATE;
@@ -36,22 +39,29 @@ import static reactor.core.publisher.Flux.empty;
 @EnableBinding(MessageSources.class)
 @Component
 public class ProductCompositeIntegration
-    implements ProductService, RecommendationService, ReviewService {
+        implements ProductService, RecommendationService, ReviewService {
   protected static final Logger LOG = LoggerFactory.getLogger(ProductCompositeIntegration.class);
   private static final String PRODUCT_SERVICE_URL = "http://product";
   private static final String RECOMMENDATION_SERVICE_URL = "http://recommendation";
   private static final String REVIEW_SERVICE_URL = "http://review";
   private final ObjectMapper mapper;
   WebClientFactory webClientFactory;
-  private MessageSources messageSources;
+
+  private final MessageSources messageSources;
+
+  private final int productServiceTimeoutSec;
 
   @Autowired
   public ProductCompositeIntegration(
-      MessageSources messageSources, ObjectMapper mapper, WebClient.Builder webClientBuilder) {
+          MessageSources messageSources,
+          ObjectMapper mapper,
+          WebClient.Builder webClientBuilder,
+          @Value("${app.product-service.timeoutSec}") int productServiceTimeoutSec) {
     webClientFactory = new WebClientFactory(webClientBuilder);
 
     this.mapper = mapper;
     this.messageSources = messageSources;
+    this.productServiceTimeoutSec = productServiceTimeoutSec;
   }
 
   @Override
@@ -65,18 +75,24 @@ public class ProductCompositeIntegration
   @Retry(name = "product")
   @CircuitBreaker(name = "product")
   @Override
-  public Mono<Product> getProduct(int productId) {
-    String url = PRODUCT_SERVICE_URL + "/product/" + productId;
+  public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+
+    URI url =
+            UriComponentsBuilder.fromUriString(
+                    PRODUCT_SERVICE_URL
+                            + "/product/{productId}?delay={delay}&faultPercent={faultPercent}")
+                    .build(productId, delay, faultPercent);
     LOG.debug("Will call the getProduct API on URL: {}", url);
 
     return webClientFactory
-        .getWebClient()
-        .get()
-        .uri(url)
-        .retrieve()
-        .bodyToMono(Product.class)
-        .log()
-        .onErrorMap(WebClientResponseException.class, this::handleException) .timeout(Duration.ofSeconds(20000));
+            .getWebClient()
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToMono(Product.class)
+            .log()
+            .onErrorMap(WebClientResponseException.class, ex -> handleException(ex))
+            .timeout(Duration.ofSeconds(productServiceTimeoutSec));
   }
 
   @Override
@@ -113,18 +129,20 @@ public class ProductCompositeIntegration
 
   @Override
   public Flux<Recommendation> getRecommendations(int productId) {
-
-    String url = RECOMMENDATION_SERVICE_URL + "/recommendation?productId=" + productId;
+    URI url =
+            UriComponentsBuilder.fromUriString(
+                    RECOMMENDATION_SERVICE_URL + "/recommendation?productId={productId}")
+                    .build(productId);
 
     LOG.debug("Will call the getRecommendations API on URL: {}", url);
 
     // Return an empty result if something goes wrong to make it possible for the composite service
     // to return partial responses
     return webClientFactory
-        .getWebClient()
-        .get()
-        .uri(url)
-        .retrieve()
+            .getWebClient()
+            .get()
+            .uri(url)
+            .retrieve()
         .bodyToFlux(Recommendation.class)
         .log()
         .onErrorResume(error -> empty());
@@ -148,17 +166,19 @@ public class ProductCompositeIntegration
   @Override
   public Flux<Review> getReviews(int productId) {
 
-    String url = REVIEW_SERVICE_URL + "/review?productId=" + productId;
+    URI url =
+            UriComponentsBuilder.fromUriString(REVIEW_SERVICE_URL + "/review?productId={productId}")
+                    .build(productId);
 
     LOG.debug("Will call getReviews API on URL: {}", url);
     return webClientFactory
-        .getWebClient()
-        .get()
-        .uri(url)
-        .retrieve()
-        .bodyToFlux(Review.class)
-        .log()
-        .onErrorResume(error -> empty());
+            .getWebClient()
+            .get()
+            .uri(url)
+            .retrieve()
+            .bodyToFlux(Review.class)
+            .log()
+            .onErrorResume(error -> empty());
   }
 
   private Throwable handleException(Throwable ex) {
