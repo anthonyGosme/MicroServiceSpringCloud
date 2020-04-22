@@ -247,3 +247,11 @@ to see asynchronous flow, (delete is idmenpotan and retuen 200 status) :
 curl -X DELETE 'https://localhost:8443/product-composite/12345' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
 view rabbitmq queues :
 http://localhost:15672/#/queues/%2F/zipkin
+
+#zipkin with kafka
+docker-compose -f docker-compose-kafka.yaml up -d
+ACCESS_TOKEN=$(curl -k  https://writer:secret@localhost:8443/oauth/token -d grant_type=password -d username=anthony -d password=password | jq -r .access_token)
+echo $ACCESS_TOKEN
+curl 'https://localhost:8443/product-composite/2' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
+curl 'https://localhost:8443/product-composite/12345' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
+curl -X DELETE 'https://localhost:8443/product-composite/12345' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 

@@ -118,7 +118,7 @@ services:
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
 
   auth-server:
-    build: spring-cloud/authorization-server
+    build: spring-cloud/auth-server
     mem_limit: 350m
     networks:
       - my-network
