@@ -255,3 +255,46 @@ echo $ACCESS_TOKEN
 curl 'https://localhost:8443/product-composite/2' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
 curl 'https://localhost:8443/product-composite/12345' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
 curl -X DELETE 'https://localhost:8443/product-composite/12345' -k  -w "%{http_code}\n" -o /dev/null -s -H "Authorization: Bearer $ACCESS_TOKEN" 
+
+#kubernetes create minikube
+
+
+
+
+
+
+# check minikube start --memory=10240 --cpus=6 --disk-size=30g --vm-driver=virtualbox
+ minikube start --memory=10240 --cpus=6 --disk-size=30g --vm-driver=virtualbox
+
+
+brew link --overwrite kubernetes-cli
+kubectl version
+cat ~/.kube/config
+minikube addons enable ingress 
+minikube addons enable metrics-server
+kubectl get nodes
+kubectl get pods --namespace=kube-system
+
+
+
+# poc namespace test
+kubectl create namespace poc
+kubectl config set-context $(kubectl config current-context) --namespace=poc
+kubectl config get-contexts 
+kubectl apply -f nginx-deployment.yaml
+kubectl get all   
+kubectl delete pod -selector app=nginx-app
+kubectl get all   
+kubectl apply -f nginx-service.yaml
+minikube ip
+http://192.168.99.100:30080/
+kg svc
+test the port & IP from inside the cluster : create a dummy pod
+kubectl run  -i --rm --restart=Never curl-client --image=tutum/curl:alpine --command -- curl -s 'http://nginx-service:80'
+kubectl run  -i --rm --restart=Never curl-client --image=tutum/curl:alpine --command -- curl -s 'http://10.105.40.172:80'
+kubectl delete namespace  poc
+
+# manage memory (hibernate & resume)
+minikube stop
+minikube start
+kubectl config set-context $(kubectl config current-context) --namespace=pockubectl crea
