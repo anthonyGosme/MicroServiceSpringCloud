@@ -17,8 +17,6 @@ public class SecurityConfig {
         .permitAll()
         .pathMatchers("/actuator/**")
         .permitAll()
-        .pathMatchers("/eureka/**")
-        .permitAll()
         .pathMatchers("/oauth/**")
         .permitAll()
         .pathMatchers("/config/**")

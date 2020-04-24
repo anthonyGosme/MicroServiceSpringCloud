@@ -246,7 +246,6 @@ if [[ $@ == *"skiptest"* ]]; then
   docker ps -a
   exit
 fi
-
 waitForService curl -k https://$HOST:$PORT/actuator/health
 ACCESS_TOKEN=$(curl -k https://writer:secret@$HOST:$PORT/oauth/token -d grant_type=password -d username=anthony -d password=password -s | jq .access_token -r)
 AUTH="-H \"Authorization: Bearer $ACCESS_TOKEN\""

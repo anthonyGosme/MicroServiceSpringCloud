@@ -35,7 +35,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - "7001:8080"
+      - 30081:80
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
       interval: 10s
@@ -56,11 +56,10 @@ services:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
-    # ports:
-    #   - "7020-7030:8080"
-    #   - "7120-7130:8001"
+    ports:
+      - 30082:80
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:80/actuator/health}"
       interval: 10s
       timeout: 10s
       retries: 10
@@ -71,7 +70,7 @@ services:
     build: microservices/product-composite-service
     mem_limit: 350m
     ports:
-      - "7000:8080"
+      - 30080:80
       - "8001:8001"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -81,7 +80,7 @@ services:
       rabbitmq:
         condition: service_healthy
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:80/actuator/health}"
       interval: 10s
       timeout: 10s
       retries: 10
@@ -114,23 +113,6 @@ services:
       timeout: 10s
       retries: 10
 
-  eureka:
-    networks:
-      - my-network
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
-      - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
-    build: spring-cloud/eureka-server
-    mem_limit: 350m
-    ports:
-      - "8761:8761"
-    healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8761/actuator/health}"
-      interval: 10s
-      timeout: 10s
-      retries: 10
-
   gateway:
     networks:
       - my-network
@@ -158,10 +140,9 @@ services:
     build: spring-cloud/auth-server
     mem_limit: 350m
     ports:
-      - 9998:8080
-      - 9999:9999
+      - 30084:80
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:9999/actuator/health}"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:80/actuator/health}"
       interval: 10s
       timeout: 10s
       retries: 10
@@ -195,11 +176,13 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
+    ports:
+      - 30083:80
     depends_on:
       mysql:
         condition: service_healthy
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:80/actuator/health}"
       interval: 10s
       timeout: 10s
       retries: 10
