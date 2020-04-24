@@ -15,7 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 
-group = 'com.agosme.microservices.cloud.eurekaserver'
+group = 'com.agosme.microservices.cloud.gateway'
 version = '1.0.0-SNAPSHOT'
 sourceCompatibility = 11
 

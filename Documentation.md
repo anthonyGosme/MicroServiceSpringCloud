@@ -5,7 +5,18 @@
 ./gradlew  :microservices:product-service:test
 ./gradlew  :microservices:product-service:clean  :microservices:product-service:build
 docker-compose kill product-service & docker-compose up product-service
+|Û
+# add alias 
+alias k=kubectl
+alias kg='kubectl get'
+alias kd='kubectl describe'
+alias kl='kubectl logs -f'
+alias ke='kubectl exec -it'
+complete -F __start_kubectl k
 
+#port troubleshooting
+
+ lsof -nPi | grep 30 
 
 #spring init
 
@@ -298,3 +309,32 @@ kubectl delete namespace  poc
 minikube stop
 minikube start
 kubectl config set-context $(kubectl config current-context) --namespace=pockubectl crea
+
+# use minikube docker image
+eval $(minikube -p minikube docker-env)
+  export DOCKER_TLS_VERIFY="1"
+  export DOCKER_HOST="tcp://192.168.99.100:2376"
+  export DOCKER_CERT_PATH="/Users/toto/.minikube/certs"
+  export MINIKUBE_ACTIVE_DOCKERD="minikube"
+
+# deploy on K8S
+
+
+
+k create namespace hands-on
+k config set-context $(kubectl config current-context) --namespace=hands-on
+k create configmap config-repo --from-file=config-repo/ --save-config
+k create secret generic config-server-secrets \
+--from-literal=ENCRYPT_KEY=my-very-secure-encrypt-key \
+--from-literal=SPRING_SECURITY_USER_NAME=dev-usr \
+--from-literal=SPRING_SECURITY_USER_PASSWORD=dev-pwd \
+--save-config
+
+k create secret generic config-client-credentials \
+--from-literal=CONFIG_SERVER_USR=dev-usr \
+--from-literal=CONFIG_SERVER_PWD=dev-pwd \
+--save-config
+
+k apply -k kubernetes/services/overlays/dev
+k wait --timeout=600s --for=condition=ready pod --all
+k get pods -o json | jq.items[].spec.containers[].image

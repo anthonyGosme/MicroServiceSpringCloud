@@ -24,6 +24,7 @@ services:
     networks:
       - my-network
     build: microservices/product-service
+    image: hands-on/product-service
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -35,9 +36,9 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - 30081:80
+      - "30081:80"
     healthcheck:
-      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:8080/actuator/health}"
+      test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:80/actuator/health}"
       interval: 10s
       timeout: 10s
       retries: 10
@@ -46,6 +47,7 @@ services:
     networks:
       - my-network
     build: microservices/recommendation-service
+    image: hands-on/recommendation-service
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -57,7 +59,7 @@ services:
       rabbitmq:
         condition: service_healthy
     ports:
-      - 30082:80
+      - "30082:80"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl localhost:80/actuator/health}"
       interval: 10s
@@ -68,9 +70,10 @@ services:
     networks:
       - my-network
     build: microservices/product-composite-service
+    image: hands-on/product-composite-service
     mem_limit: 350m
     ports:
-      - 30080:80
+      - "30080:80"
       - "8001:8001"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -105,8 +108,8 @@ services:
     image: rabbitmq:3.7.8-management
     mem_limit: 350m
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 10s
@@ -121,6 +124,7 @@ services:
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build: spring-cloud/gateway
+    image: hands-on/gateway
     mem_limit: 350m
     ports:
       - "8443:8443"
@@ -138,9 +142,10 @@ services:
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     build: spring-cloud/auth-server
+    image: hands-on/auth-server
     mem_limit: 350m
     ports:
-      - 30084:80
+      - "30084:80"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:80/actuator/health}"
       interval: 10s
@@ -158,9 +163,10 @@ services:
     volumes:
       - /Users/toto/Repo/git/MicroServiceSpringCloud/config-repo:/config-repo
     build: spring-cloud/config-server
+    image: hands-on/config-server
     mem_limit: 350m
     ports:
-      - 8888:8888
+      - "8888:8888"
     healthcheck:
       test: "${DOCKER_HEALTHCHECK_TEST:-curl http://localhost:8888/actuator/health}"
       interval: 30s
@@ -171,13 +177,14 @@ services:
     networks:
       - my-network
     build: microservices/review-service
+    image: hands-on/review-service
     mem_limit: 350m
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - CONFIG_SERVER_USR=${CONFIG_SERVER_USR}
       - CONFIG_SERVER_PWD=${CONFIG_SERVER_PWD}
     ports:
-      - 30083:80
+      - "30083:80"
     depends_on:
       mysql:
         condition: service_healthy
@@ -195,7 +202,7 @@ services:
       - STORAGE_TYPE=mem
       - RABBIT_ADDRESSES=rabbitmq
     ports:
-      - 9411:9411
+      - "9411:9411"
     depends_on:
       rabbitmq:
         condition: service_healthy

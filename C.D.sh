@@ -2,7 +2,7 @@
 source .env
 set -e
 ./gradlew build -x test
-echo usage ./C.D.sh docker-compose-custo
+echo usage : ./C.D.sh [docker-compose-custo.yaml]
 yaml=docker-compose.yaml
 
 if [ "$1" ]; then
