@@ -41,8 +41,7 @@ import static reactor.core.publisher.Mono.just;
     webEnvironment = RANDOM_PORT,
     classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class},
     properties = {
-      "spring.main.allow-bean-definition-overriding=true",
-      "spring.cloud.config.enabled=false"
+      "spring.main.allow-bean-definition-overriding=true"
     })
 public class MessagingTests {
 

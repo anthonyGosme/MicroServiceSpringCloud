@@ -30,7 +30,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = {"spring.datasource.url=jdbc:h2:mem:review-db", 	"spring.cloud.config.enabled=false"})
+    properties = {"spring.datasource.url=jdbc:h2:mem:review-db"})
 @AutoConfigureWebTestClient
 public class ReviewApplicationTests {
 

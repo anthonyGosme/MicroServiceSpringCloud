@@ -346,7 +346,7 @@ k get pods -o jso**n | jq.items[].spec.containers[].image
 kubectl delete all --all
 
 # test if  working 
-
+HOST=192.168.99.101 PORT=31443 ./test-em-all.bash
 https://192.168.99.101:31443/actuator/health
 
 my.redirect.uri
@@ -397,3 +397,11 @@ k rollout history deployment product --revision=2
 # ngrok
 
 ngrok authtoken 1b2...
+
+
+#ingress & config with K8s
+./kubernetes/scripts/createNamespace.bash
+./kubernetes/scripts/deploy-dev-env.bash   
+k apply -k kubernetes/services/overlays/dev
+
+HOST=192.168.99.101 PORT=443 ./test-em-all.bash

@@ -29,7 +29,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = {"spring.data.mongodb.port: 0","spring.cloud.config.enabled=false"})
+    properties = {"spring.data.mongodb.port: 0"})
 @AutoConfigureWebTestClient
 public class ProductServiceApplicationTests {
 
