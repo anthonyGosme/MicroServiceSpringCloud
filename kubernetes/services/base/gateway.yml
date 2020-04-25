@@ -23,7 +23,7 @@ spec:
           - secretRef:
               name: config-client-credentials
         ports:
-        - containerPort: 8443
+        - containerPort: 8444
         resources:
           limits:
             memory: 350Mi
@@ -31,7 +31,7 @@ spec:
           httpGet:
             scheme: HTTPS
             path: /actuator/info
-            port: 8443
+            port: 8444
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -41,7 +41,7 @@ spec:
           httpGet:
             scheme: HTTPS
             path: /actuator/info
-            port: 8443
+            port: 8444
           initialDelaySeconds: 10
           periodSeconds: 10
           timeoutSeconds: 2
@@ -60,4 +60,4 @@ spec:
   ports:
     - port: 443
       nodePort: 31443
-      targetPort: 8443
+      targetPort: 8444
