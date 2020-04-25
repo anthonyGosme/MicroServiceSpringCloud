@@ -33,9 +33,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
     webEnvironment = RANDOM_PORT,
     classes = {ProductCompositeServiceApplication.class, TestSecurityConfig.class},
     properties = {
-      "spring.main.allow-bean-definition-overriding=true",
-      "eureka.client.enabled=false",
-      "spring.cloud.config.enabled=false"
+      "spring.main.allow-bean-definition-overriding=true"
     })
 public class ProductCompositeServiceApplicationTests {
 
