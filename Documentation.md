@@ -12,7 +12,7 @@ alias kg='kubectl get'
 alias kd='kubectl describe'
 alias kl='kubectl logs -f'
 alias ke='kubectl exec -it'
-eval $(minikube -p minikube dockekeker-env)
+eval $(minikube -p minikube docker-env)
 
 #port troubleshooting
 
@@ -353,3 +353,47 @@ my.redirect.uri
 https://192.168.99.101:31443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=http://my.redirect.uri&scope=product:read&state=48532
 https://192.168.99.101:31443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=https://192.168.99.101:31443/product-composite/2&scope=product:read&state=48532
 https://192.168.99.101:31443/oauth/authorize?response_type=token&client_id=reader&redirect_uri=https://my.redirect.uri:31443/product-composite/2&scope=product:read&state=48532
+
+
+# run prod
+eval $(minikube docker-env)
+docker-compose up -d mongodb mysql rabbitmq
+
+docker tag hands-on/config-server  hands-on/config-server:v1     
+docker tag hands-on/review-service hands-on/review-service:v1 
+docker tag hands-on/auth-server  hands-on/auth-server:v1                                           
+docker tag hands-on/gateway hands-on/gateway:v1                                                 
+docker tag hands-on/product-service  hands-on/product-service:v1                                        
+docker tag hands-on/recommendation-service hands-on/recommendation-service:v1                               
+docker tag hands-on/product-composite-service  hands-on/product-composite-service:v1    
+ 
+k create namespace hands-on
+k config set-context $(kubectl config current-context) --namespace=hands-on
+k create secret generic config-client-credentials \
+--from-literal=CONFIG_SERVER_USR=dev-usr \
+--from-literal=CONFIG_SERVER_PWD=dev-pwd \
+--save-config
+history -c; history -w
+k apply -k
+k apply -k kubernetes/services/overlays/prod/
+k create configmap config-repo --from-file=config-repo/ --save-config
+
+# rooling update
+kg po -l app=product -o 
+kg po -l app=product -o jsonpath='{.items[*].spec.containers[*].image} '
+docker tag hands-on/product-service:v1  hands-on/product-service:v2
+siege https://$(minikube ip):31443/actuator/health -c1 -d1
+for i in `seq 100O0`; do curl -o /dev/null --silent --head --write-out '%{http_code}\n'  https://$(minikube ip):31443/actuator/health -k ; done
+kubectl set image deployment/product pro=hands-on/product-service:v2
+kg po -l app=product -w
+
+# roll back
+kg po -l app=product -w
+kubectl set image deployment/product pro=hands-on/product-service:v4
+k rollout history deployment product
+k rollout history deployment product --revision=2
+
+
+# ngrok
+
+ngrok authtoken 1b2...

@@ -215,7 +215,7 @@ function testCircuitBreaker() {
   assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_REVS_RECS $AUTH -s"
   # assertEqual "Fallback product2" "$(echo "$RESPONSE" | jq -r .name)"
 
-  # echo "# Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND) from the fallback method."
+   echo "# Verify that a 404 (Not Found) error is returned for a non existing productId ($PROD_ID_NOT_FOUND) from the fallback method."
   assertCurl 500 "curl -k https://$HOST:$PORT/product-composite/$PROD_ID_NOT_FOUND $AUTH -s"
   #  assertEqual "Product Id: $PROD_ID_NOT_FOUND not found in fallback cache!" "$(echo $RESPONSE | jq -r .message)"
 
@@ -224,8 +224,13 @@ function testCircuitBreaker() {
   sleep 10
 
   echo "Verify that the circuit breaker is in half open state"
-  echo "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
+  ##echo "$($EXEC wget product-composite:8080/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
+   assertEqual "HALF_OPEN" "$($EXEC wget product-composite/actuator/health -qO - | jq -r .components.circuitBreakers.details.product.details.state)"
+
+
   assertEqual "HALF_OPEN" "$(curl http://localhost:7000/actuator/health | jq -r .components.circuitBreakers.details.product.details.state)"
+
+
   echo "# Close the circuit breaker by running three normal calls in a row"
   echo "# Also, verify that we get 200 back and a response based on information in the product database"
   for ((n = 0; n < 3; n++)); do
@@ -238,12 +243,12 @@ function testCircuitBreaker() {
 
     assertEqual "CLOSED" "$($EXEC wget product-composite/actuator/health -qO - | jq -r .details.productCircuitBreaker.details.state)"
 
-    # Verify that the expected state transitions happened in the circuit breaker
+      echo "#Verify that the expected state transitions happened in the circuit breaker
     assertEqual "CLOSED_TO_OPEN"      "$($EXEC wget product-composite/actuator/circuitbreakerevents/product/STATE_TRANSITION -qO - | jq -r .circuitBreakerEvents[-3].stateTransition)"
     assertEqual "OPEN_TO_HALF_OPEN"   "$($EXEC wget product-composite/actuator/circuitbreakerevents/product/STATE_TRANSITION -qO - | jq -r .circuitBreakerEvents[-2].stateTransition)"
     assertEqual "HALF_OPEN_TO_CLOSED" "$($EXEC wget product-composite/actuator/circuitbreakerevents/product/STATE_TRANSITION -qO - | jq -r .circuitBreakerEvents[-1].stateTransition)"
 
-    # Shutdown the client pod if we are using Kubernetes, i.e. not runnig on localhost.
+    echo "# Shutdown the client pod if we are using Kubernetes, i.e. not runnig on localhost.
     if [ "$HOST" != "localhost" ]
     then
         kubectl -n $ns delete pod alpine-client --grace-period=1
