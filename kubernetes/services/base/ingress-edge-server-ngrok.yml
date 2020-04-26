@@ -1,3 +1,4 @@
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -6,22 +7,22 @@ metadata:
     certmanager.k8s.io/issuer: "letsencrypt-issuer-staging"
 spec:
   tls:
-  - hosts:
-    - 4144987b.ngrok.io
-    secretName: tls-ngrok-letsencrypt-certificate
+    - hosts:
+        - d308ab04.ngrok.io
+      secretName: tls-ngrok-letsencrypt-certificate
   rules:
-  - host: 4144987b.ngrok.io
-    http:
-      paths:
-      - path: /oauth
-        backend:
-          serviceName: auth-server
-          servicePort: 80
-      - path: /product-composite
-        backend:
-          serviceName: product-composite
-          servicePort: 80        
-      - path: /actuator/health
-        backend:
-          serviceName: product-composite
-          servicePort: 80
+    - host: d308ab04.ngrok.io
+      http:
+        paths:
+          - path: /oauth
+            backend:
+              serviceName: auth-server
+              servicePort: 80
+          - path: /product-composite
+            backend:
+              serviceName: product-composite
+              servicePort: 80
+          - path: /actuator/health
+            backend:
+              serviceName: product-composite
+              servicePort: 80

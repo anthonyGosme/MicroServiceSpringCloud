@@ -417,8 +417,10 @@ kubectl create namespace cert-manager
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.9.1/cert-manager.yaml
 kubectl get pods --namespace cert-manager
 
-
+### certificats
 # issuer saveing config
+kubectl config get-contexts 
+k config set-context $(kubectl config current-context) --namespace=hands-on
 k apply -f kubernetes/services/base/letsencrypt-issuer-staging.yaml
 k apply -f kubernetes/services/base/letsencrypt-issuer-prod.yaml
 
@@ -428,12 +430,15 @@ ngrok http https://minkub.me:443
 watch k get po -n cert-manager
 # edit and apply the ngrol server 4b5354dc
 kubectl apply -f kubernetes/services/base/ingress-edge-server-ngrok.yml
-NGROK_HOST=4144987b.ngrok.io 
+NGROK_HOST=d308ab04.ngrok.io 
 keytool -printcert -sslserver $NGROK_HOST:443 | grep -E "Owner:|Issuer:"
 HOST=4144987b.ngrok.io  PORT=443 ./test-em-all.bash
 
 #restart nginx
 kg deployment -A  | grep ngi
 kubectl scale --replicas=0 deployment nginx-ingress-controller -n kube-system
-
 kubectl scale --replicas=0 deployment nginx-deploy
+kubectl scale --replicas=1 deployment nginx-ingress-controller -n kube-system
+kubectl scale --replicas=1 deployment nginx-deploy
+
+HOST=$NGROK_HOST PORT=443 ./test-em-all.bash

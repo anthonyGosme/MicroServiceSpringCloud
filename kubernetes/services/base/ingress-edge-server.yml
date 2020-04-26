@@ -1,3 +1,4 @@
+---
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -5,21 +6,21 @@ metadata:
 spec:
   tls:
     - hosts:
-      - minikube.me
+        - minikube.me
       secretName: tls-certificate
   rules:
-  - host: minikube.me
-    http:
-      paths:
-      - path: /oauth
-        backend:
-          serviceName: auth-server
-          servicePort: 80
-      - path: /product-composite
-        backend:
-          serviceName: product-composite
-          servicePort: 80        
-      - path: /actuator/health
-        backend:
-          serviceName: product-composite
-          servicePort: 80
+    - host: minikube.me
+      http:
+        paths:
+          - path: /oauth
+            backend:
+              serviceName: auth-server
+              servicePort: 80
+          - path: /product-composite
+            backend:
+              serviceName: product-composite
+              servicePort: 80
+          - path: /actuator/health
+            backend:
+              serviceName: product-composite
+              servicePort: 80
