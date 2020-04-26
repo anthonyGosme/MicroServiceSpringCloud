@@ -406,6 +406,8 @@ k apply -k kubernetes/services/overlays/dev
 HOST=minikube.me PORT=443 ./test-em-all.bash
 
 #isue a  certifiate to the cert manager
+kubectl config get-contexts 
+k config set-context $(kubectl config current-context) --namespace=hands-on
 0.8.1 -> 0.9.1
 kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v0.9.1/cert-manager.yaml
 k delete namespace cert-manager
@@ -413,24 +415,25 @@ k delete namespace cert-manager
 #get status of namesapce :
 kubectl get namespace cert-manager -o json
 kubectl create namespace cert-manager
-#install 
+
+
+#install  cert mananger
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.9.1/cert-manager.yaml
 kubectl get pods --namespace cert-manager
 
 ### certificats
 # issuer saveing config
-kubectl config get-contexts 
-k config set-context $(kubectl config current-context) --namespace=hands-on
+
 k apply -f kubernetes/services/base/letsencrypt-issuer-staging.yaml
 k apply -f kubernetes/services/base/letsencrypt-issuer-prod.yaml
 
 # run the cert issuing 
-ngrok http https://minkub.me:443
-
-watch k get po -n cert-manager
-# edit and apply the ngrol server 4b5354dc
+Open the tunnel.. leave it open  til the end
+ngrok http https://minikube.me:443
+edit and apply the ingress ngrok server hosts&host  = a7066f0f.ngrok.io
 kubectl apply -f kubernetes/services/base/ingress-edge-server-ngrok.yml
-NGROK_HOST=d308ab04.ngrok.io 
+kubectl get cert -A   -> should be hands-on tls-ngrok-letsencrypt-certificate 
+NGROK_HOST=a7066f0f.ngrok.io 
 keytool -printcert -sslserver $NGROK_HOST:443 | grep -E "Owner:|Issuer:"
 HOST=4144987b.ngrok.io  PORT=443 ./test-em-all.bash
 

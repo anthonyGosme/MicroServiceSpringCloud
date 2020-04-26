@@ -4,14 +4,14 @@ kind: Ingress
 metadata:
   name: edge-ngrok
   annotations:
-    certmanager.k8s.io/issuer: "letsencrypt-issuer-staging"
+    certmanager.k8s.io/issuer: "letsencrypt-issuer-prod"
 spec:
   tls:
     - hosts:
-        - d308ab04.ngrok.io
+        - a7066f0f.ngrok.io
       secretName: tls-ngrok-letsencrypt-certificate
   rules:
-    - host: d308ab04.ngrok.io
+    - host: a7066f0f.ngrok.io
       http:
         paths:
           - path: /oauth
