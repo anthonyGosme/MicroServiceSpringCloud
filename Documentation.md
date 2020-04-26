@@ -5,14 +5,20 @@
 ./gradlew  :microservices:product-service:test
 ./gradlew  :microservices:product-service:clean  :microservices:product-service:build
 docker-compose kill product-service & docker-compose up product-service
-|Û
-# add alias 
+
+
+# initialisation  C.D K8S
 alias k=kubectl
 alias kg='kubectl get'
 alias kd='kubectl describe'
 alias kl='kubectl logs -f'
 alias ke='kubectl exec -it'
 eval $(minikube -p minikube docker-env)
+./kubernetes/scripts/recreateNameSpace.sh
+./kubernetes/scripts/deploy-dev-env.bash   
+watch k get po
+HOST=minikube.me PORT=443 ./test-em-all.bash
+
 
 #port troubleshooting
 
@@ -318,7 +324,7 @@ eval $(minikube -p minikube docker-env)
   export DOCKER_HOST="tcp://192.168.99.100:2376"
   export DOCKER_CERT_PATH="/Users/toto/.minikube/certs"
   export MINIKUBE_ACTIVE_DOCKERD="minikube"
-
+export DOCKER_HOST="127.0.0.1:49455"
 # deploy on K8S
 
 
@@ -330,11 +336,6 @@ k create secret generic config-server-secrets \
 --from-literal=ENCRYPT_KEY=my-very-secure-encrypt-key \
 --from-literal=SPRING_SECURITY_USER_NAME=dev-usr \
 --from-literal=SPRING_SECURITY_USER_PASSWORD=dev-pwd cd se\
---save-config
-
-k create secret generic config-client-credentials \
---from-literal=CONFIG_SERVER_USR=dev-usr \
---from-literal=CONFIG_SERVER_PWD=dev-pwd \
 --save-config
 
 k apply -k kubernetes/services/overlays/dev

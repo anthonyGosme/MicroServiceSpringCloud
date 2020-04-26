@@ -93,7 +93,7 @@ services:
     image: hands-on/product-composite-service
     mem_limit: 350m
     ports:
-      - "30080:80"
+      - "30180:80"
       - "8001:8001"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
@@ -119,6 +119,9 @@ services:
     ports:
       - "27017:27017"
     command: mongod --smallfiles
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_USR}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_PWD}
     healthcheck:
       test: "mongo --eval 'db.stats().ok'"
       interval: 10s
