@@ -5,7 +5,12 @@ server.ssl:
   key-store: classpath:keystore/edge.p12
   key-alias: localhost
 
-
+spring:
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          enabled: false
 ribbon.ServerListRefreshInterval: 5000
 
 ribbon.NFLoadBalancerPingInterval: 5

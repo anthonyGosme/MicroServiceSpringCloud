@@ -8,8 +8,10 @@
 #
 #   HOST=localhost PORT=7000 ./test-em-all.bash
 #
-: ${HOST=192.168.99.101}
-: ${PORT=31443}
+: ${HOST=minikube.me}
+: ${PORT=443}:
+#: ${HOST=192.168.99.101}
+#: ${PORT=31443}
 : ${PROD_ID_REVS_RECS=2}
 : ${PROD_ID_NOT_FOUND=14}
 : ${PROD_ID_NO_RECS=114}

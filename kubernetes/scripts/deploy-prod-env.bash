@@ -40,3 +40,10 @@ docker tag hands-on/review-service            hands-on/review-service:v1
 kubectl apply -k kubernetes/services/overlays/prod
 
 kubectl wait --timeout=600s --for=condition=ready pod --all
+
+
+
+# certificat provisionnnig
+
+kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v0.14.2/cert-manager.yaml
+kubectl wait --timeout=600s --for=condition=ready pod --all -n cert-manager

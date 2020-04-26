@@ -106,7 +106,12 @@ logging:
     root: INFO
     se.magnus: DEBUG
     org.springframework.web.server.adapter.HttpWebHandlerAdapter: TRACE
-
+spring:
+  cloud:
+    discovery:
+      client:
+        composite-indicator:
+          enabled: false
 ---
 spring.profiles: docker
 

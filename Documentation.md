@@ -393,7 +393,7 @@ kubectl set image deployment/product pro=hands-on/product-service:v4
 k rollout history deployment product
 k rollout history deployment product --revision=2
 
-
+HOST=192.168.99.101 PORT=31443 ./test-em-all.bash
 # ngrok
 
 ngrok authtoken 1b2...
@@ -403,5 +403,37 @@ ngrok authtoken 1b2...
 ./kubernetes/scripts/createNamespace.bash
 ./kubernetes/scripts/deploy-dev-env.bash   
 k apply -k kubernetes/services/overlays/dev
+HOST=minikube.me PORT=443 ./test-em-all.bash
 
-HOST=192.168.99.101 PORT=443 ./test-em-all.bash
+#isue a  certifiate to the cert manager
+0.8.1 -> 0.9.1
+kubectl delete -f https://github.com/jetstack/cert-manager/releases/download/v0.9.1/cert-manager.yaml
+k delete namespace cert-manager
+
+#get status of namesapce :
+kubectl get namespace cert-manager -o json
+kubectl create namespace cert-manager
+#install 
+kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.9.1/cert-manager.yaml
+kubectl get pods --namespace cert-manager
+
+
+# issuer saveing config
+k apply -f kubernetes/services/base/letsencrypt-issuer-staging.yaml
+k apply -f kubernetes/services/base/letsencrypt-issuer-prod.yaml
+
+# run the cert issuing 
+ngrok http https://minkub.me:443
+
+watch k get po -n cert-manager
+# edit and apply the ngrol server 4b5354dc
+kubectl apply -f kubernetes/services/base/ingress-edge-server-ngrok.yml
+NGROK_HOST=4144987b.ngrok.io 
+keytool -printcert -sslserver $NGROK_HOST:443 | grep -E "Owner:|Issuer:"
+HOST=4144987b.ngrok.io  PORT=443 ./test-em-all.bash
+
+#restart nginx
+kg deployment -A  | grep ngi
+kubectl scale --replicas=0 deployment nginx-ingress-controller -n kube-system
+
+kubectl scale --replicas=0 deployment nginx-deploy
